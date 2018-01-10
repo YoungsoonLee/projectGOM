@@ -28,8 +28,8 @@ class TopBar extends Component {
 	render() {
 		const { authenticated } = this.store;
 		return (
-			<div>
-				<TopNav location={this.props.location} history={this.props.history}/>
+			<div >
+				<TopNav location={this.props.location} history={this.props.history} />
 				{/*
 				<Button 
 					onClick={this.authenticate.bind(this)}

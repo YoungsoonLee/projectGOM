@@ -87,7 +87,8 @@ export default class AppState {
     this.profileEmail = null;
   }
 
-  @action setInitLoggedInUserInfo() {
+  @action async setInitLoggedInUserInfo() {
+    storage.remove('___GOM___');
     this.authenticated = false;
     this.loggedInUserInfo._id = '';
     this.loggedInUserInfo.displayName = '';
@@ -232,6 +233,8 @@ export default class AppState {
         });
       }
     }else{
+      this.setInitUserInfo();
+
       if(!this.error) {
         social[provider]().then((accessToken)=>{
           AuthAPI.socialLogin({ 
@@ -270,8 +273,8 @@ export default class AppState {
     if ( storage.get('___GOM___') ) {
       let { data } = await AuthAPI.checkLoginStatus();
       if(!data) {
-        storage.remove('___GOM___');
-        this.setInitLoggedInUserInfo()
+        //storage.remove('___GOM___');
+        await this.setInitLoggedInUserInfo()
       }else{
         //delete data.user.balance;
         //console.log('authenticate: ', data);
@@ -286,27 +289,17 @@ export default class AppState {
         this.loggedInUserInfo.gravatar = data.gravatar;
       }
     }else{
-      this.setInitLoggedInUserInfo();
+      await this.setInitLoggedInUserInfo();
     }
   }
 
-  @action clearLoggedInInfo() {
-    storage.remove('___GOM___');
-    this.authenticated = !this.authenticated;
-    this.authenticating = false;
-    this.loggedInUserInfo.displayName = '';
-    this.loggedInUserInfo.balance = '0';
-    this.loggedInUserInfo.gravatar = '';
-  }
-
   @action async logout(history) {
-    this.setInitUserInfo();
-
     //check auth
     let { data } = await AuthAPI.logout();
 
     if(!data) {
-      this.clearLoggedInInfo();
+      //storage.remove('___GOM___');
+      await this.setInitLoggedInUserInfo()
       history.push('/login');
     }
   }

@@ -155,6 +155,14 @@ export default class App extends Component {
 								<LazyRoute {...props} component={import("./test/test.js")} />
 							)}
 						/>
+
+						<Route
+							exact
+							path="/forum"
+							render={props => (
+								<LazyRoute {...props} component={import("./forum/Posts.js")} />
+							)}
+						/>
 						
 						{/*
 						<Route

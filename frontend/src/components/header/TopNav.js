@@ -51,9 +51,9 @@ class TopNav extends Component {
 		//console.log(this.props.history);
 		if (name === 'home') {
 			this.props.history.push('/');
-		}else if(name ==='forum'){
+		//}else if(name ==='forum'){
 			// Sets the new href (URL) for the current window.
-			window.location.href = "http://localhost:4567";
+			//window.location.href = "http://localhost:4567";
 		}else{
 			this.props.history.push('/'+name);
 		}
@@ -76,8 +76,9 @@ class TopNav extends Component {
 		if(authenticated) {
 			viewPane = (
 				<div>
-					<Menu.Item><Image src={loggedInUserInfo.gravatar} size='mini' circular />
-						<Dropdown item text={loggedInUserInfo.displayName} size='mini'>
+					<Menu.Item>
+						<Image src={loggedInUserInfo.gravatar} size='mini' circular />
+						<Dropdown item text={loggedInUserInfo.displayName} size='mini' >
 							<Dropdown.Menu>
 								<Dropdown.Item name='profile' onClick={this.handleItemClick}>My Profile</Dropdown.Item>
 								<Dropdown.Item name='payment/history' onClick={this.handleItemClick}>My Coin</Dropdown.Item>
@@ -101,7 +102,7 @@ class TopNav extends Component {
 		}
 
 		return (
-			<div>
+			<div  className="item">
 				<Menu pointing borderless={true} fixed='top' >
 					<Container>
 						<Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick} />

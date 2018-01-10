@@ -673,18 +673,20 @@ exports.socialLogin = async (ctx) => {
             const access_token = await user.generateToken;
             //console.log(accessToken);
 
+            
             // configure accessToken to httpOnly cookie
             ctx.cookies.set('access_token', access_token, {
                 httpOnly: true,
                 maxAge: 1000 * 60 * 60 * 24 * 7   // 7days
             });
 
+            
             //TODO: set cookie for forum
             var ftoken = jwt.sign({
                 id: user.get('id'),
                 username: user.get('name'),
                 picture: user.get('picture')
-            }, process.env.SESSION_SECRET);
+            }, process.env.JWT_SECRET);
             
             /*
             if (req.cookies['connect.sid-f']) {
@@ -701,7 +703,7 @@ exports.socialLogin = async (ctx) => {
                 httpOnly: true,
                 expires: cookieExpirationDate
             }); 
-
+            
 
             //TODO: insert user_login_history
 
@@ -803,5 +805,18 @@ exports.logout = (ctx) => {
         maxAge: 0,
         httpOnly: true
     });
+
+    //forum cookie
+    ctx.cookies.set('connect.sid-f', null, {
+        maxAge: 0,
+        httpOnly: true
+    });
+
+    //express.sid
+    ctx.cookies.set('express.sid', null, {
+        maxAge: 0,
+        httpOnly: true
+    });
+
     ctx.status = 204;
 };
