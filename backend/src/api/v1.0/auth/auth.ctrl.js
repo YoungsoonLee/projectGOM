@@ -9,6 +9,7 @@ const log = require('lib/log');
 const sendmail = require('lib/mail');
 
 const jwt = require('jsonwebtoken');
+const cookie = require('lib/cookie');
 
 exports.localRegister = async (ctx) => {
     const { body } = ctx.request;
@@ -84,15 +85,10 @@ exports.localRegister = async (ctx) => {
 
     // if your web use this as backend, you should return jwtoken.
     const accessToken = await user.generateToken;
-    //console.log(accessToken);
+    
+    // set cookie
+    cookie.setCookie(ctx, accessToken, user);
 
-    // configure accessToken to httpOnly cookie
-    ctx.cookies.set('access_token', accessToken, {
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7   // 7days
-    });
-
-    // TODO: set cookie for forum
     // TODO: insert user_login_history
 
     ctx.body = {
@@ -176,13 +172,9 @@ exports.localLogin = async (ctx) => {
     // if your web use this as backend, you should return jwtoken.
     const accessToken = await user.generateToken;
 
-    // configure accessToken to httpOnly cookie
-    ctx.cookies.set('access_token', accessToken, {
-      httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 7   // 7days
-    });
+    // set cookie
+    cookie.setCookie(ctx, accessToken, user.toJSON());
 
-    // TODO: set cookie for forum 
     // TODO: save user_login_history
 
     ctx.body = {
@@ -411,10 +403,7 @@ exports.check = async (ctx) => {
 
       if(!exists) {
         // invalid user, clear cookie
-        ctx.cookies.set('access_token', null, {
-          maxAge: 0,
-          httpOnly: true
-        });
+        cookie.removeCookie();
 
         ctx.status = 401;
         ctx.body = {
@@ -578,15 +567,10 @@ exports.socialRegister = async (ctx) => {
     try {
         // if your web use this as backend, you should return jwtoken.
         const access_token = await user.generateToken;
-        //console.log(accessToken);
 
-        // configure accessToken to httpOnly cookie
-        ctx.cookies.set('access_token', access_token, {
-            httpOnly: true,
-            maxAge: 1000 * 60 * 60 * 24 * 7   // 7days
-        });
+        // set cookie
+        cookie.setCookie(ctx, access_token, user );
 
-        // TODO: set cookie for forum
         // TODO: insert user_login_history
 
         //get balance
@@ -677,39 +661,10 @@ exports.socialLogin = async (ctx) => {
       try {
             // if your web use this as backend, you should return jwtoken.
             const access_token = await user.generateToken;
-            //console.log(accessToken);
 
-            // configure accessToken to httpOnly cookie
-            ctx.cookies.set('access_token', access_token, {
-                httpOnly: true,
-                maxAge: 1000 * 60 * 60 * 24 * 7   // 7days
-            });
-
+            // set cookie
+            cookie.setCookie(ctx, access_token, user.toJSON());
             
-            //TODO: set cookie for forum
-            var ftoken = jwt.sign({
-                id: user.get('id'),
-                username: user.get('name'),
-                picture: user.get('picture')
-            }, process.env.JWT_SECRET);
-             
-            /* TODO:
-            if (req.cookies['connect.sid-f']) {
-                res.clearCookie('connect.sid-f');
-                res.clearCookie('express.sid');
-            }
-            */
-
-            const cookieExpirationDate = new Date(moment().format('YYYY-MM-DD HH:mm:ss.mm'));
-            const cookieExpirationDays = 7; //7days
-            cookieExpirationDate.setDate(cookieExpirationDate.getDate() + cookieExpirationDays);
-
-            ctx.cookies.set('connect.sid-f', ftoken, {
-                httpOnly: true,
-                expires: cookieExpirationDate
-            }); 
-            
-
             //TODO: insert user_login_history
 
         } catch (e) {
@@ -769,12 +724,9 @@ exports.socialLogin = async (ctx) => {
                 // if your web use this as backend, you should return jwtoken.
                 const access_token = await duplicated.generateToken;
 
-                ctx.cookies.set('access_token', access_token, {
-                    httpOnly: true,
-                    maxAge: 1000 * 60 * 60 * 24 * 7   // 7days
-                });
+                // set cookie
+                cookie.setCookie(ctx, access_token, duplicated.toJSON());
 
-                // TODO: set cookie for forum
                 // TODO: insert user_login_history
                 
             } catch (e) {
@@ -807,23 +759,7 @@ exports.socialLogin = async (ctx) => {
   };
 
 exports.logout = (ctx) => {
-    ctx.cookies.set('access_token', null, {
-        maxAge: 0,
-        httpOnly: true
-    });
-
-    //forum cookie
-    ctx.cookies.set('connect.sid-f', null, {
-        maxAge: 0,
-        httpOnly: true
-    });
-
-    //express.sid
-    ctx.cookies.set('express.sid', null, {
-        maxAge: 0,
-        httpOnly: true
-    });
-
+    cookie.removeCookie(ctx);
 
     ctx.status = 204;
 };

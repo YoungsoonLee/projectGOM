@@ -32,11 +32,11 @@
         - youngtip  -- not use
 
     # balance 연동
-        nodebb의 user 테이블 signature컬럼 값으로 이용
+        nodebb의 user 테이블 signature컬럼을 balance값으로 이용
         nodebb의 src/middleware/header.js의 90라인에 signature 추가
         nodebb의 src/middleware/header.js의 124라인에 request 로직 추가
         nodebb의 config.json의 request용 api url 수정
-        nodebb의 menu.tp의 balance부분에 {user.signature} 추가
+        nodebb의 /NodeBB/node_modules/nodebb-theme-persona/templates/partials/menu.tpl의 balance부분에 {user.signature} 추가
 
     # html user menu에 setting, edit 제거
         /Users/leeyoungsoon/my_task/my_bolierplate/NodeBB/node_modules/nodebb-theme-persona/templates/partials/accpunt/menu.tpl 의 user setting, edit 제거
