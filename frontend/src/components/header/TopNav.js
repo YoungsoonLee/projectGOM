@@ -24,8 +24,7 @@ class TopNav extends Component {
 
 		//check menu
 		var culoc = String(this.props.location.pathname).substring(1,String(this.props.location.pathname).length);
-		console.log(culoc);
-
+		
 		if (  (culoc.search('payment')<0) && (culoc.search('/') > 0) ) {
 			culoc = culoc.substring(0, culoc.search('/'));
 		} 
@@ -33,7 +32,7 @@ class TopNav extends Component {
 		if( culoc.length == 0){
 			culoc = 'home';
 		}
-		console.log(culoc);
+
 		this.setState({ activeItem: culoc });
 	}
 	
@@ -48,12 +47,12 @@ class TopNav extends Component {
 		this.store.setInitUserInfo();
 
 		this.setState({ activeItem: name });
-		//console.log(this.props.history);
+
 		if (name === 'home') {
 			this.props.history.push('/');
-		//}else if(name ==='forum'){
+		}else if(name ==='forum'){
 			// Sets the new href (URL) for the current window.
-			//window.location.href = "http://localhost:4567";
+			window.location.href = "http://localhost:4567";
 		}else{
 			this.props.history.push('/'+name);
 		}

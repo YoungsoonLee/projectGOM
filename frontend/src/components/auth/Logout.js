@@ -2,38 +2,31 @@ import React, { Component } from 'react';
 import { inject, observer } from "mobx-react";
 import { Redirect, withRouter } from "react-router-dom";
 
+import { Button } from 'semantic-ui-react';
 
 @withRouter
 @inject("store")
 @observer
 class Logout extends Component {
     
-    constructor(props){
+    constructor(props) {
         super(props);
-        console.log('0');
-        const { history } = this.props;
-        this.props.store.appState.logout(history);
-    }
-
-    componentWillMount(){
-        console.log('1');
-        const { history } = this.props;
-        this.props.store.appState.logout(history);
-        //this.store.authenticate();
+        this.store = this.props.store.appState;
     }
 
     componentDidMount() {
         console.log('2');
         const { history } = this.props;
-        this.props.store.appState.logout(history);
-        //this.store.authenticate();
+        this.store.logout(history);
     }
 
 
     render() {
+        const { history } = this.props;
+
         return (
             <div className="page posts">
-				<ul>Logout...</ul>
+                <ul>Logout...</ul>
 			</div>
         );
     }

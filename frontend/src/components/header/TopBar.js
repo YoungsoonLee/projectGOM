@@ -15,6 +15,7 @@ class TopBar extends Component {
 	constructor(props) {
 		super(props);
 		this.store = this.props.store.appState;
+		
 	}
 
 	/*

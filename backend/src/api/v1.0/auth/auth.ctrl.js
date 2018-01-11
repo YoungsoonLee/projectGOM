@@ -582,17 +582,23 @@ exports.socialRegister = async (ctx) => {
 
         // configure accessToken to httpOnly cookie
         ctx.cookies.set('access_token', access_token, {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 * 7   // 7days
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60 * 24 * 7   // 7days
         });
 
         // TODO: set cookie for forum
         // TODO: insert user_login_history
 
+        //get balance
+        let gravatar = user.picture;
+
         ctx.body = {
             displayName,
-            _id: user.id
+            _id: user.id,
+            balance: 0,
+            gravatar
         };
+
         return;
 
     } catch (e) {
@@ -673,7 +679,6 @@ exports.socialLogin = async (ctx) => {
             const access_token = await user.generateToken;
             //console.log(accessToken);
 
-            
             // configure accessToken to httpOnly cookie
             ctx.cookies.set('access_token', access_token, {
                 httpOnly: true,
@@ -687,8 +692,8 @@ exports.socialLogin = async (ctx) => {
                 username: user.get('name'),
                 picture: user.get('picture')
             }, process.env.JWT_SECRET);
-            
-            /*
+             
+            /* TODO:
             if (req.cookies['connect.sid-f']) {
                 res.clearCookie('connect.sid-f');
                 res.clearCookie('express.sid');
@@ -721,6 +726,7 @@ exports.socialLogin = async (ctx) => {
             displayName: user.get('name'),
             _id: user.get('id')
         };
+
         return;
     }
   
@@ -817,6 +823,7 @@ exports.logout = (ctx) => {
         maxAge: 0,
         httpOnly: true
     });
+
 
     ctx.status = 204;
 };

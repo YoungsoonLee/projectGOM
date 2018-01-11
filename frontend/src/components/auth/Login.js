@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { inject, observer } from "mobx-react";
-import { Redirect } from "react-router-dom";
-import { Link, withRouter } from "react-router-dom";
+import { Redirect,Link, withRouter  } from "react-router-dom";
 
 import { Container, Button, Header, Modal, Message, Grid, Form, Segment, Input, Divider, Label, Icon } from 'semantic-ui-react'
 
@@ -46,8 +45,9 @@ class Login extends Component {
 	render() {
         const { history } = this.props;
 
-        // TODO: next 쿼리 체크
+        console.log('login history: ', history.browserHistory);
 
+        // TODO: next 쿼리 체크
         const { authModalMode, signupStep, userInfo, error, errorFlash, successFlash } = this.store;
 
         const ErrorView = (

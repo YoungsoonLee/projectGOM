@@ -89,6 +89,7 @@ export default class AppState {
 
   @action async setInitLoggedInUserInfo() {
     storage.remove('___GOM___');
+
     this.authenticated = false;
     this.loggedInUserInfo._id = '';
     this.loggedInUserInfo.displayName = '';
@@ -169,6 +170,7 @@ export default class AppState {
         storage.set('___GOM___', data);
         this.authenticate();
         history.push('/');
+
       }catch(e){
         //console.log('1', e.response.data.message);
         this.setError(e.response.data.message);
@@ -178,7 +180,6 @@ export default class AppState {
 
   // localLogin
   @action async localLogin(history) {
-    console.log('locallogin: ', history);
 
     if(!validator.isEmail(this.userInfo.email)) {
       this.setError('please input a valid email address.');
@@ -193,11 +194,17 @@ export default class AppState {
       let data = null;
       try{
         data = await AuthAPI.localLogin({email: this.userInfo.email, password: this.userInfo.password});
+
         storage.set('___GOM___', data);
         this.authenticate();
 
-        //history.push('/');
-        history.goBack();
+        //history.goBack();
+        //for forum...temp
+        if(document.referrer === 'http://localhost:4567/'){
+          history.push('/');
+        }else{
+          history.goBack();
+        }
 
       }catch(e){
         //console.log('1',data.response);
@@ -219,9 +226,19 @@ export default class AppState {
             accessToken: accessToken,
           }).then((response)=>{
             //console.log(response.data);
+
             storage.set('___GOM___', response.data);
-            history.push('/');
+            
+            //for forum...temp
+            if(document.referrer === 'http://localhost:4567/'){
+              history.push('/');
+            }else{
+              history.goBack();
+            }
+
+            //history.goBack();
             this.authenticate(); // !! important after redirect
+
           }).catch((err)=>{
             //console.log(err.response.data.message);
             this.setError(err.response.data.message);
@@ -244,17 +261,21 @@ export default class AppState {
             //console.log(response.data);
             storage.set('___GOM___', response.data);
             
-            //history.push('/');
-            history.goBack();
+            //for forum...temp
+            if(document.referrer === 'http://localhost:4567/'){
+              history.push('/');
+            }else{
+              history.goBack();
+            }
 
+            //history.goBack();
             this.authenticate(); // !! important after redirect
+
           }).catch((err)=>{
-            //console.log(err.response.data.message);
             this.setError(err.response.data.message);
           });
     
         }).catch((err)=>{
-            //console.log('error: ', err);
             this.setError('somthing wrong with '+provider+'. try again after a few minutes.');
         });
       }
@@ -267,28 +288,33 @@ export default class AppState {
 
   @action async authenticate() {
     //check auth
-    //storage.get('___GOM___');
-    //console.log('app: ', storage.get('___GOM___'));
+    //console.log('check auth start');
 
     if ( storage.get('___GOM___') ) {
-      let { data } = await AuthAPI.checkLoginStatus();
-      if(!data) {
-        //storage.remove('___GOM___');
+      let auth = null;
+      try{
+        auth = await AuthAPI.checkLoginStatus();
+        //console.log('auth: ', auth);
+      }catch(e){
+        //console.log('exception check: ', e.message);
+        await this.setInitLoggedInUserInfo();
+      }
+
+      if(!auth) {
+        //console.log('1');
         await this.setInitLoggedInUserInfo()
       }else{
-        //delete data.user.balance;
-        //console.log('authenticate: ', data);
-
-        storage.set('___GOM___', data);
+        //console.log('2');
+        storage.set('___GOM___', auth.data);
         
-        //this.authenticated = !this.authenticated;
         this.authenticated = true;
-        this.loggedInUserInfo._id = data.user._id;
-        this.loggedInUserInfo.displayName = data.user.displayName;
-        this.loggedInUserInfo.balance = data.balance.toString();
-        this.loggedInUserInfo.gravatar = data.gravatar;
+        this.loggedInUserInfo._id = auth.data.user._id;
+        this.loggedInUserInfo.displayName = auth.data.user.displayName;
+        this.loggedInUserInfo.balance = auth.data.balance.toString();
+        this.loggedInUserInfo.gravatar = auth.data.gravatar;
       }
     }else{
+      console.log('no gom');
       await this.setInitLoggedInUserInfo();
     }
   }
@@ -296,12 +322,16 @@ export default class AppState {
   @action async logout(history) {
     //check auth
     let { data } = await AuthAPI.logout();
-
+    await this.authenticate();
+    history.push('/');
+    
+    /*
     if(!data) {
-      //storage.remove('___GOM___');
       await this.setInitLoggedInUserInfo()
-      history.push('/login');
+      //history.push('/login');
+      history.push('/');
     }
+    */
   }
 
   @action async emailConfirm(confirm_token, history) {
