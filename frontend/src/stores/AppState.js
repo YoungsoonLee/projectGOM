@@ -288,9 +288,9 @@ export default class AppState {
 
   @action async authenticate() {
     //check auth
-    //console.log('check auth start');
+    //TODO: think ! check GOM or not
 
-    if ( storage.get('___GOM___') ) {
+    //if ( storage.get('___GOM___') ) {
       let auth = null;
       try{
         auth = await AuthAPI.checkLoginStatus();
@@ -313,10 +313,10 @@ export default class AppState {
         this.loggedInUserInfo.balance = auth.data.balance.toString();
         this.loggedInUserInfo.gravatar = auth.data.gravatar;
       }
-    }else{
-      console.log('no gom');
-      await this.setInitLoggedInUserInfo();
-    }
+    //}else{
+    //  console.log('no gom');
+    //  await this.setInitLoggedInUserInfo();
+    //}
   }
 
   @action async logout(history) {
