@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 
+import Carousel from './ui/Carousel';
+
 @inject("store")
 @observer
 export default class Home extends Component {
@@ -12,8 +14,15 @@ export default class Home extends Component {
 	render() {
 		const store = this.store;
 		return (
-			<div className="page home">
+			<div>
+			<div><Carousel /></div>
+			
+			<div className="page home" >
+				
+				
+				{/*
 				<header>
+					
 					<div className="hero-unit">
 						<div className="react-logo" />
 						<h1>React MobX React-Router 4 Boilerplate</h1>
@@ -32,6 +41,8 @@ export default class Home extends Component {
 						</a>
 					</div>
 				</header>
+				*/}
+				
 				<main>
 					<div className="section-header">
 						<h3>Included libraries</h3>
@@ -107,6 +118,8 @@ export default class Home extends Component {
 						</ul>
 					</div>
 				</main>
+			</div>
+
 			</div>
 		);
 	}

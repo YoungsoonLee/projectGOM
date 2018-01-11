@@ -4,9 +4,11 @@ import { Redirect,Link, withRouter  } from "react-router-dom";
 
 import { Container, Button, Header, Modal, Message, Grid, Form, Segment, Input, Divider, Label, Icon } from 'semantic-ui-react'
 
-import ActiveLink from "../ui/ActiveLink";
+//import ActiveLink from "../ui/ActiveLink";
 import Social from './Social';
+import AlreadyLogin from '../wrapper/AlreadyLoginWrapper';
 
+@AlreadyLogin
 @withRouter
 @inject("store")
 @observer
@@ -14,6 +16,14 @@ class Login extends Component {
     constructor(props) {
         super(props);
         this.store = this.props.store.appState;
+    }
+
+    componentDidMount() {
+        console.log('componentDidMount');
+    }
+
+    componentDidUpdate(){
+        console.log('componentDidUpdate');
     }
     
     handleModeChanged = (e) =>{
@@ -44,8 +54,6 @@ class Login extends Component {
     // login or register component
 	render() {
         const { history } = this.props;
-
-        console.log('login history: ', history.browserHistory);
 
         // TODO: next 쿼리 체크
         const { authModalMode, signupStep, userInfo, error, errorFlash, successFlash } = this.store;

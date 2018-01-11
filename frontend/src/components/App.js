@@ -47,6 +47,7 @@ export default class App extends Component {
 						<LazyRoute {...props} component={import("./Home")} />
 					)}
 				/>
+				
 				<div>
 					<Container text style={{ marginTop: '5em' }}>
 
