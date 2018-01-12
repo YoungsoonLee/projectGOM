@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { inject, observer } from "mobx-react";
 import { Link, withRouter } from "react-router-dom";
 
-import { Form, Input, List, Label, Button, Message } from 'semantic-ui-react'
+import { Container, Form, Input, List, Label, Button, Message } from 'semantic-ui-react'
 
 @withRouter
 @inject("store")
@@ -58,31 +58,32 @@ class Profile extends Component {
         }
 
         return (
-
-            <div className="page posts">
-                <h1>Profile</h1><p color={'Red'}>* Cannot be changed</p>
-                <Form className='attached fluid segment' style={{ maxWidth: 450 }}>
-                    <Form.Input color={'Grey'} label='Display Name' readOnly placeholder='Username' type='text' value={loggedInUserInfo.displayName}/>
-                    <Form.Input label='Email' type='text' readOnly value={profileEmail === null ? '': profileEmail}/>
-                </Form>
-                <hr />
-                <h1>Change Password</h1>
-                { errorFlashView }
-                { successFlashView }
-                <Form className='attached fluid segment' style={{ maxWidth: 450 }}>
-                    <Form.Input label='New Password' name='password' placeholder='new password' type='password' value={userInfo.password} onChange={this.handleInputPassword}/>
-                    <Form.Input label='Confirm Password' name='confirmPassword' placeholder='confirm password' type='password' value={this.state.confirmPassword} onChange={this.handleInputConfirmPassword}/>
-                    <div>
-                        { error !== null ? ErrorView : null }
-                    </div>
-                    <Button color='blue' onClick={
-                        ()=>this.store.updateProfile(
-                            this.state.confirmPassword,
-                            history
-                        )
-                    }>Submit</Button>
-                </Form>
-            </div>
+            <Container text style={{ marginTop: '5em' }}>
+                <div className="page posts">
+                    <h1>Profile</h1><p color={'Red'}>* Cannot be changed</p>
+                    <Form className='attached fluid segment' style={{ maxWidth: 450 }}>
+                        <Form.Input color={'Grey'} label='Display Name' readOnly placeholder='Username' type='text' value={loggedInUserInfo.displayName}/>
+                        <Form.Input label='Email' type='text' readOnly value={profileEmail === null ? '': profileEmail}/>
+                    </Form>
+                    <hr />
+                    <h1>Change Password</h1>
+                    { errorFlashView }
+                    { successFlashView }
+                    <Form className='attached fluid segment' style={{ maxWidth: 450 }}>
+                        <Form.Input label='New Password' name='password' placeholder='new password' type='password' value={userInfo.password} onChange={this.handleInputPassword}/>
+                        <Form.Input label='Confirm Password' name='confirmPassword' placeholder='confirm password' type='password' value={this.state.confirmPassword} onChange={this.handleInputConfirmPassword}/>
+                        <div>
+                            { error !== null ? ErrorView : null }
+                        </div>
+                        <Button color='blue' onClick={
+                            ()=>this.store.updateProfile(
+                                this.state.confirmPassword,
+                                history
+                            )
+                        }>Submit</Button>
+                    </Form>
+                </div>
+            </Container>
         );
     }
 }

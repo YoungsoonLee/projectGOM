@@ -5,6 +5,8 @@ const billing = require('./billing');
 const user = require('./user');
 const news = require('./news');
 
+const adminAuth = require('./admin/auth');
+
 
 const api = new Router();
 
@@ -14,5 +16,6 @@ api.use('/billing', billing.routes());
 api.use('/user', user.routes());
 api.use('/news', news.routes());
 
+api.use('/admin', adminAuth.routes());
 
 module.exports = api;

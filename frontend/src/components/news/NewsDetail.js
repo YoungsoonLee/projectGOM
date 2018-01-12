@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { inject, observer } from "mobx-react";
 import { Link, withRouter } from "react-router-dom";
 
-import {  Message  } from 'semantic-ui-react'
+import {  Message, Container  } from 'semantic-ui-react'
 
 
 @withRouter
@@ -32,21 +32,22 @@ class NewsDetail extends Component {
         }
 
 		return (
-            <div className="page post">
-                {errorFlashView}
-				<Link to="/news">← Back to News</Link>
-				{!!newsitem &&
-                    <article>
-                        <h1>{newsitem.category}</h1>
-                        <hr />
-                        <h2>{newsitem.title}</h2>
-                        <hr />
-                        <p>{newsitem.subject}</p>
-                        <hr />
-                        <p>{newsitem.created_at}</p>
-					</article>}
-
-			</div>
+            <Container style={{ marginTop: '5em' }}>
+                <div className="page post">
+                    {errorFlashView}
+                    <Link to="/news">← Back to News</Link>
+                    {!!newsitem &&
+                        <article>
+                            <h1>{newsitem.category}</h1>
+                            <hr />
+                            <h2>{newsitem.title}</h2>
+                            <hr />
+                            <p>{newsitem.subject}</p>
+                            <hr />
+                            <p>{newsitem.created_at}</p>
+                        </article>}
+                </div>
+            </Container>
 		);
     }
 }

@@ -23,7 +23,7 @@ export default class Home extends Component {
 						
 						<div className="hero-unit">
 							<div className="react-logo" />
-							<h1>project GOM</h1>
+							<h1>ADMIN</h1>
 						</div>
 						{/*
 						<div className="hero-subunit">
@@ -42,6 +42,7 @@ export default class Home extends Component {
 						*/}
 					</header>
 					
+					{/*
 					<main>
 						<div className="section-header">
 							<h3>Included libraries</h3>
@@ -117,6 +118,8 @@ export default class Home extends Component {
 							</ul>
 						</div>
 					</main>
+					*/}
+
 				</div>
 
 			</div>

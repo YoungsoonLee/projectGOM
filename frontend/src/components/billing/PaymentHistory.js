@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { inject, observer } from "mobx-react";
 import { Link, withRouter } from "react-router-dom";
 
-import { Menu, Icon } from 'semantic-ui-react'
+import { Menu, Icon, Container } from 'semantic-ui-react'
 
 @withRouter
 @inject("store")
@@ -31,7 +31,7 @@ class PaymentHistory extends Component {
 
     render() {
         return (
-            <div>
+            <Container style={{ marginTop: '5em' }}>
                 <div>
                     <Menu tabular>
                     {/*
@@ -45,7 +45,7 @@ class PaymentHistory extends Component {
                 <div className="page home">
                     <div id="tabulator-1"></div>
                 </div>
-            </div>
+            </Container>
         );
     }
 }

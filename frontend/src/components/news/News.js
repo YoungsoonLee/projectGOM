@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import { Link, withRouter } from "react-router-dom";
 import Script from 'react-load-script'
 
-//import { Dimmer, Loader, Segment, Card, Icon, Button, Image, Message } from 'semantic-ui-react'
+import { Container } from 'semantic-ui-react'
 
 @withRouter
 @inject("store")
@@ -24,7 +24,7 @@ class News extends Component {
         //console.log(this.props.match.path);
 
         return (
-            <div>
+            <Container style={{ marginTop: '5em' }}>
                 <div id="News" className="page posts">
                     <h1>News</h1>
                     <hr />
@@ -52,7 +52,7 @@ class News extends Component {
               
               <Script url="/assets/js/infiniteScroll.js"/>
 
-            </div>
+            </Container>
           );
     }
 }

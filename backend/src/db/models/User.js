@@ -363,7 +363,47 @@ var User = bookshelf.Model.extend({
             });
 
         });
-    }
+    },
+
+    adminRegister: function({displayName, email, password}){
+        return new Promise(function(resolve, reject) {
+            bookshelf.transaction(function(trx) {
+                var picture = new User({email: email});
+                // save is insert
+                // User({}) is update
+                new User().save(
+                    {
+                        name: displayName,
+                        email: email,
+                        password: password,
+                        confirmed: true,
+                        permission: 'admin:default',
+                        //confirm_reset_token: uid(32),
+                        //confirm_reset_expires: moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss.mm'),
+                        picture: picture.gravatar,
+                        created_at: moment().format('YYYY-MM-DD HH:mm:ss.mm')
+                    }
+                ).then(function(user) {
+                    new UserWallet().save({
+                        user_id: user.get('id'),
+                        balance: 0,
+                        created_at: moment().format('YYYY-MM-DD HH:mm:ss.mm')
+                    }).then(function(user_wallet) {
+                        resolve(user.toJSON());
+                    }).catch(function(err) {
+                        // TODO: logging
+                        trx.rollback();
+                        reject(null);
+                    })
+                }).catch(function(err) {
+                    // TODO: logging
+                    console.log('err: ', err)
+                    trx.rollback();
+                    reject(null);
+                });
+            });
+        });
+    },
 
 });
 

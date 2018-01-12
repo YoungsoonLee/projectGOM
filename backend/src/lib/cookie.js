@@ -1,11 +1,24 @@
 const moment = require('moment');
 const jwt = require('jsonwebtoken');
 
+const log = require('lib/log');
+
 module.exports.setCookie = async function(ctx, access_token, user) {
+    let cookieExpireTime = null;
+
+    if(String(user.permission).search('admin') >= 0 ) {
+        //console.log('isAdmin: true', user.name, user.permission);
+        log.info('[ADMIN COOKIE]', user.name, user.permission);
+        cookieExpireTime = 1000 * 60 * 60 * 3 // 3 hours
+    }else{
+        log.info('[USER COOKIE]', user.name, user.permission);
+        cookieExpireTime = 1000 * 60 * 60 * 24 * 7   // 7days
+    }
+
     // configure accessToken to httpOnly cookie
     ctx.cookies.set('access_token', access_token, {
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 * 7   // 7days
+        maxAge: cookieExpireTime
     });
 
     //set cookie for forum
@@ -34,7 +47,8 @@ module.exports.setCookie = async function(ctx, access_token, user) {
 
     ctx.cookies.set('connect.sid-f', ftoken, {
         httpOnly: true,
-        expires: cookieExpirationDate
+        //expires: cookieExpirationDate
+        maxAge: cookieExpireTime
     }); 
 
 };

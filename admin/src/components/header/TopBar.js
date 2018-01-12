@@ -17,26 +17,12 @@ class TopBar extends Component {
 		this.store = this.props.store.appState;
 		
 	}
-
-	/*
-	authenticate(e) {
-		if (e) e.preventDefault();
-		//console.log("CLICKED BUTTON");
-		this.store.authenticate();
-	}
-	*/
 	
 	render() {
 		const { authenticated } = this.store;
 		return (
 			<div >
 				<TopNav location={this.props.location} history={this.props.history} />
-				{/*
-				<Button 
-					onClick={this.authenticate.bind(this)}
-					title={authenticated ? "Log out" : "Sign in / Sign up"}
-				/>
-				*/}
 			</div>
 		);
 	}

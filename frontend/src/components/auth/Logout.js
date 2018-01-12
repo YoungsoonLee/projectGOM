@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { inject, observer } from "mobx-react";
 import { Redirect, withRouter } from "react-router-dom";
 
-import { Button, Loader, Grid,Dimmer, Segment } from 'semantic-ui-react';
+import { Container, Button, Loader, Grid,Dimmer, Segment } from 'semantic-ui-react';
 
 @withRouter
 @inject("store")
@@ -25,7 +25,7 @@ class Logout extends Component {
         const { history } = this.props;
 
         return (
-            <div>
+            <Container text style={{ marginTop: '5em' }}>
                 <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle' >
                     <Grid.Column style={{ maxWidth: 450, marginTop: '10em'  }}>
                             <Dimmer active inverted>
@@ -34,7 +34,7 @@ class Logout extends Component {
 
                     </Grid.Column>
                 </Grid>
-            </div>
+            </Container>
         );
     }
 }

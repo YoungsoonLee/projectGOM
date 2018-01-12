@@ -1,18 +1,18 @@
 import React, { Component } from "react";
 import { inject, observer } from "mobx-react";
 import { Route, Link, withRouter } from "react-router-dom";
-import ActiveLink from "../ui/ActiveLink";
+//import ActiveLink from "../ui/ActiveLink";
 
 import { Menu, Container, Dropdown, Icon, Image } from 'semantic-ui-react';
 
-import socket from '../../lib/socket';
+//import socket from '../../lib/socket';
 
 @withRouter
 @inject("store")
 @observer
 class TopNav extends Component {
 
-	state = { activeItem: 'home' };
+	state = { activeItem: 'admin' };
 
 	constructor(props) {
 		super(props);
@@ -20,17 +20,13 @@ class TopNav extends Component {
 	}
 
 	componentDidMount() {
-		socket.subscribe('BALANCE');
+		//socket.subscribe('BALANCE');
 
 		//check menu
 		var culoc = String(this.props.location.pathname).substring(1,String(this.props.location.pathname).length);
 		
-		if (  (culoc.search('payment')<0) && (culoc.search('/') > 0) ) {
-			culoc = culoc.substring(0, culoc.search('/'));
-		} 
-
 		if( culoc.length == 0){
-			culoc = 'home';
+			culoc = 'admin';
 		}
 
 		this.setState({ activeItem: culoc });
@@ -38,7 +34,7 @@ class TopNav extends Component {
 	
 	  
 	componentWillUnmount() {
-		socket.unsubscribe('BALANCE');
+		//socket.unsubscribe('BALANCE');
 	}
 
 	handleItemClick = (e, { name }) => { 
@@ -48,11 +44,8 @@ class TopNav extends Component {
 
 		this.setState({ activeItem: name });
 
-		if (name === 'home') {
+		if (name === 'admin') {
 			this.props.history.push('/');
-		}else if(name ==='forum'){
-			// Sets the new href (URL) for the current window.
-			window.location.href = "http://localhost:4567";
 		}else{
 			this.props.history.push('/'+name);
 		}
@@ -72,6 +65,7 @@ class TopNav extends Component {
 		const { activeItem } = this.state;
 
 		var viewPane = null;
+
 		if(authenticated) {
 			viewPane = (
 				<div>
@@ -79,8 +73,6 @@ class TopNav extends Component {
 						<Image src={loggedInUserInfo.gravatar} size='mini' circular />
 						<Dropdown item text={loggedInUserInfo.displayName} size='mini' >
 							<Dropdown.Menu>
-								<Dropdown.Item name='profile' onClick={this.handleItemClick}>My Profile</Dropdown.Item>
-								<Dropdown.Item name='payment/history' onClick={this.handleItemClick}>My Coin</Dropdown.Item>
 								<Dropdown.Item onClick={()=>this.store.logout(history)}>Sign Out</Dropdown.Item>
 							</Dropdown.Menu>
 						</Dropdown>
@@ -90,25 +82,14 @@ class TopNav extends Component {
 		}else{
 			viewPane = (<div><Menu.Item name='login' active={activeItem === 'login'} onClick={this.handleItemClick}>Sign In</Menu.Item></div>)
 		}
-
-		var paymentPane = null;
-		if(authenticated) {
-			paymentPane = (
-				<Menu.Item name='payment' active={activeItem === 'payment'} onClick={this.handleItemClick} >
-					<Icon name='diamond'/>{numeral(this.store.loggedInUserInfo.balance).format('0,0')}
-				</Menu.Item>
-			)
-		}
+		
 
 		return (
 			<div  className="item">
 				<Menu pointing borderless={true} fixed='top' >
 					<Container>
-						<Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick} />
+						<Menu.Item name='admin' active={activeItem === 'admin'} onClick={this.handleItemClick} />
 						<Menu.Item name='news' active={activeItem === 'news'} onClick={this.handleItemClick} />
-						<Menu.Item name='forum' active={activeItem === 'forum'} onClick={this.handleItemClick} />
-
-						{paymentPane}
 
 						<Menu.Menu position='right'>
 							{viewPane}
@@ -117,12 +98,6 @@ class TopNav extends Component {
 				</Menu>
 			</div>
 
-			/*
-			<nav>
-				<ActiveLink activeOnlyWhenExact={true} to="/">Home</ActiveLink>
-				{authenticated && <ActiveLink to="/posts">Posts</ActiveLink>}
-			</nav>
-			*/
 		);
 	}
 }

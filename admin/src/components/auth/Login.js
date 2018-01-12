@@ -4,8 +4,6 @@ import { Redirect,Link, withRouter  } from "react-router-dom";
 
 import { Container, Button, Header, Modal, Message, Grid, Form, Segment, Input, Divider, Label, Icon } from 'semantic-ui-react'
 
-//import ActiveLink from "../ui/ActiveLink";
-import Social from './Social';
 import AlreadyLogin from '../wrapper/AlreadyLoginWrapper';
 
 @AlreadyLogin
@@ -18,6 +16,7 @@ class Login extends Component {
         this.store = this.props.store.appState;
     }
 
+    /*
     componentDidMount() {
         console.log('componentDidMount');
     }
@@ -25,6 +24,7 @@ class Login extends Component {
     componentDidUpdate(){
         console.log('componentDidUpdate');
     }
+    */
     
     handleModeChanged = (e) =>{
         this.store.changeAuthModalMode();
@@ -105,9 +105,8 @@ class Login extends Component {
                             { error !== null ? ErrorView : null }
                         </div>
                     </Form.Field>
-                    <Button color='violet' fluid size='small' onClick={()=>this.store.localLogin(history)}>{authModalMode === 'SIGNIN' ? 'SIGN IN' : 'SIGN UP'}</Button>
-                    <Divider horizontal>Or</Divider>
-                    <Social />
+                    <Button color='violet' fluid size='small' onClick={()=>this.store.adminLogin(history)}>{authModalMode === 'SIGNIN' ? 'SIGN IN' : 'SIGN UP'}</Button>
+                    
                 </Segment>
             </Form>
         );
@@ -163,10 +162,8 @@ class Login extends Component {
                     </div>
                 </Form.Field>
                 <div>
-                    <Button color='violet' fluid size='small' onClick={() => this.store.localRegister(history)}>SIGNUP</Button>
+                    <Button color='violet' fluid size='small' onClick={() => this.store.adminRegister(history)}>SIGNUP</Button>
                 </div>
-                <Divider horizontal>Or</Divider>
-                <Social />
             </Segment>
         );
 
@@ -183,7 +180,7 @@ class Login extends Component {
                         {successFlashView}
                         {errorFlashView}
                         
-                        <Header as='h2' textAlign='center'>{authModalMode === 'SIGNIN' ? 'SIGN IN' : 'SIGN UP'}</Header>
+                        <Header as='h2' textAlign='center'>ADMIN {authModalMode === 'SIGNIN' ? 'SIGN IN' : 'SIGN UP'}</Header>
 
                         { authModalMode === 'SIGNIN' ? SigninView : SignupView }
 

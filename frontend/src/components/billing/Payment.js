@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { inject, observer } from "mobx-react";
 import { Link, withRouter } from "react-router-dom";
 
-import { Dimmer, Loader, Segment, Card, Icon, Button, Image, Message } from 'semantic-ui-react'
+import { Container, Dimmer, Loader, Segment, Card, Icon, Button, Image, Message } from 'semantic-ui-react'
 
 //import Protected from "../wrapper/Protected";
 import ChargeDataWrapper from '../wrapper/ChargeDataWrapper';
@@ -40,7 +40,7 @@ class Payment extends Component {
         }
 
         return (
-            <div>
+            <Container text style={{ marginTop: '5em' }}>
                 {successFlashView}
                 {errorFlashView}
                 <Card.Group itemsPerRow={3} >
@@ -70,7 +70,7 @@ class Payment extends Component {
 
                 <button data-xpaystation-widget-open id="buyXsolla" hidden="hidden">Buy Credits</button>
                 <Script url="https://static.xsolla.com/embed/paystation/1.0.7/widget.min.js"/>
-            </div>
+            </Container>
         );
     }
 }

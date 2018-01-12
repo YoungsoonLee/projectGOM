@@ -177,7 +177,7 @@ class Login extends Component {
         );
 
         const ModalView = (
-            <div>
+            <Container text style={{ marginTop: '5em' }}>
                 <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle' >
                     <Grid.Column style={{ maxWidth: 450 }}>
                         {successFlashView}
@@ -193,7 +193,7 @@ class Login extends Component {
 
                     </Grid.Column>
                 </Grid>
-            </div>
+            </Container>
         );
 
 		return (ModalView);

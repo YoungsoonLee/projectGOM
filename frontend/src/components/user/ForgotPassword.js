@@ -43,7 +43,7 @@ class ForgotPassword extends Component {
         }
 
         return (
-            <div>
+            <Container text style={{ marginTop: '5em' }}>
                 <Grid>
                     <Grid.Column>
                         <div>
@@ -85,7 +85,7 @@ class ForgotPassword extends Component {
 
                     </Grid.Column>
                 </Grid>
-            </div>
+            </Container>
         )
     }
 }

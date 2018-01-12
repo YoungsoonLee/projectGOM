@@ -1,45 +1,9 @@
-import React, { Component } from "react";
-import { Route, Link, withRouter } from "react-router-dom";
-import { inject, observer } from "mobx-react";
-import LazyRoute from "lazy-route";
-import DevTools from "mobx-react-devtools";
 
-import { Container } from 'semantic-ui-react'
-
-import { TopBar } from "./header/index";
-import { Login } from './auth/index';
-
-@withRouter
-@inject("store")
-@observer
-export default class App extends Component {
-	constructor(props) {
-		super(props);
-		this.store = this.props.store;
-	}
-	componentDidMount() {
-		this.authenticate();
-	}
-	authenticate(e) {
-		if (e) e.preventDefault();
-		this.store.appState.authenticate();
-	}
-	render() {
-		/*
-		const {
-			authenticated,
-			authenticating,
-			//timeToRefresh,
-			//refreshToken,
-			//testval
-		} = this.store.appState;
-		*/
-
-		return (
+			{/*
 			<div>
-				{/*<DevTools />*/}
+				
 				<TopBar />
-
+				
 				<Route
 					exact
 					path="/"
@@ -50,14 +14,6 @@ export default class App extends Component {
 				
 				<div>
 					<Container text style={{ marginTop: '5em' }}>
-
-						{/*
-						<Route
-							exact
-							path="/login"
-							component={Login}
-						/>
-						*/}
 
 						<Route
 							exact
@@ -107,10 +63,24 @@ export default class App extends Component {
 							)}
 						/>
 
+						<Route
+							exact
+							path="/payment"
+							render={props => (
+								<LazyRoute {...props} component={import("./billing/Payment.js")} />
+							)}
+						/>
 					</Container>
 					
 					<Container>
-						
+						<Route
+							exact
+							path="/payment/history"
+							render={props => (
+								<LazyRoute {...props} component={import("./billing/PaymentHistory.js")} />
+							)}
+						/>
+
 						<Route
 							exact
 							path="/news"
@@ -143,29 +113,18 @@ export default class App extends Component {
 							)}
 						/>
 
-						
-						{/*
 						<Route
 							exact
-							path="/posts"
+							path="/forum"
 							render={props => (
-								<LazyRoute {...props} component={import("./SubPage")} />
+								<LazyRoute {...props} component={import("./forum/Posts.js")} />
 							)}
 						/>
-						<Route
-							exact
-							path="/posts/:id"
-							render={props => (
-								<LazyRoute {...props} component={import("./SubItem")} />
-							)}
-						/>
-						*/}
 						
-					</Container>
-					
+					</Container>		
 				</div>
 				
+				<Route component={NotFound}/>
+				
 			</div>
-		);
-	}
-}
+			*/}

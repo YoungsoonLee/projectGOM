@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { inject, observer } from "mobx-react";
 import { Link, withRouter } from "react-router-dom";
 
-import { Dimmer, Loader, Segment } from 'semantic-ui-react'
+import { Dimmer, Loader, Segment, Container } from 'semantic-ui-react'
 
 @withRouter
 @inject("store")
@@ -20,7 +20,9 @@ class EmailConfirm extends Component {
 
     render() {
         return (
-            <Loader active inline='centered' />
+            <Container text style={{ marginTop: '5em' }}>
+                <Loader active inline='centered' />
+            </Container>
         );
     }
 }

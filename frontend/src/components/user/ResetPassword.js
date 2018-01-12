@@ -54,7 +54,7 @@ class ResetPassword extends Component {
         }
 
         return (
-            <div>
+            <Container text style={{ marginTop: '5em' }}>
                 <Grid>
                     <Grid.Column>
                         <div>
@@ -113,7 +113,7 @@ class ResetPassword extends Component {
 
                     </Grid.Column>
                 </Grid>
-            </div>
+            </Container>
         );
     }
 }
