@@ -63,8 +63,8 @@ var User = bookshelf.Model.extend({
                             token: jwtToken,
                             hashed: token.getAccessToken(jwtToken),
                             ip_address: ip_address,
-                            created_at: moment().format('YYYY-MM-DD HH:mm:ss.mm'),
-                            expired_at: moment().add(7, 'days').format('YYYY-MM-DD HH:mm:ss.mm')
+                            created_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm'),
+                            expired_at: moment().add(7, 'days').format('YYYY-MM-DDTHH:mm:ss.mm')
                         }
                     ).then((access_token)=>{
                         resolve(access_token.toJSON())
@@ -75,7 +75,7 @@ var User = bookshelf.Model.extend({
           );
     },
 
-    hidden: ['password', 'password_reset_expires'],
+    //hidden: ['password', 'password_reset_expires'],
 
     virtuals: {
         gravatar: function() {
@@ -153,15 +153,15 @@ var User = bookshelf.Model.extend({
                         email: email,
                         password: password,
                         confirm_reset_token: uid(32),
-                        confirm_reset_expires: moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss.mm'),
+                        confirm_reset_expires: moment().add(1, 'hour').format('YYYY-MM-DDTHH:mm:ss.mm'),
                         picture: picture.gravatar,
-                        created_at: moment().format('YYYY-MM-DD HH:mm:ss.mm')
+                        created_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm')
                     }
                 ).then(function(user) {
                     new UserWallet().save({
                         user_id: user.get('id'),
                         balance: 0,
-                        created_at: moment().format('YYYY-MM-DD HH:mm:ss.mm')
+                        created_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm')
                     }).then(function(user_wallet) {
                         resolve(user.toJSON());
                     }).catch(function(err) {
@@ -197,13 +197,13 @@ var User = bookshelf.Model.extend({
                         provider: provider,
                         provider_id: provider_id,
                         provider_access_token: accessToken,
-                        created_at: moment().format('YYYY-MM-DD HH:mm:ss.mm')
+                        created_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm')
                     }
                 ).then(function(user) {
                     new UserWallet().save({
                         user_id: user.get('id'),
                         balance: 0,
-                        created_at: moment().format('YYYY-MM-DD HH:mm:ss.mm')
+                        created_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm')
                     }).then(function(user_wallet) {
                         resolve(user.toJSON());
                     }).catch(function(err) {
@@ -253,7 +253,7 @@ var User = bookshelf.Model.extend({
                 user.set('confirmed', true);
                 user.set('confirm_reset_token', null);
                 user.set('confirm_reset_expires', null);
-                user.set('updated_at', moment().format('YYYY-MM-DD hh:mm:ss'));
+                user.set('updated_at', moment().format('YYYY-MM-DDTHH:mm:ss.mm'));
                 user.save(user.changed, {patch: true}).then(function() {
                     resolve(user.toJSON());
                 }).catch(function(err) {
@@ -294,7 +294,7 @@ var User = bookshelf.Model.extend({
                 user.set('password', password);
                 user.set('password_reset_token', null);
                 user.set('password_reset_expires', null);
-                user.set('updated_at', moment().format('YYYY-MM-DD hh:mm:ss'));
+                user.set('updated_at', moment().format('YYYY-MM-DDTHH:mm:ss.mm'));
                 user.save(user.changed, {patch: true}).then(function() {
                     resolve(user.toJSON());
                 }).catch(function(err) {
@@ -311,7 +311,7 @@ var User = bookshelf.Model.extend({
         return new Promise(function(resolve, reject) {
             new User({id: id}).fetch().then((user)=>{
                 user.set('password', password);
-                user.set('updated_at', moment().format('YYYY-MM-DD hh:mm:ss'));
+                user.set('updated_at', moment().format('YYYY-MM-DDTHH:mm:ss.mm'));
                 user.save(user.changed, {patch: true}).then(function() {
                     resolve(user.toJSON());
                 }).catch(function(err) {
@@ -329,8 +329,8 @@ var User = bookshelf.Model.extend({
             new User({id: id}).fetch().then((user)=>{
                 user.set('confirmed', false);
                 user.set('confirm_reset_token', uid(32));
-                user.set('confirm_reset_expires', moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss.mm'));
-                user.set('updated_at', moment().format('YYYY-MM-DD HH:mm:ss.mm'));
+                user.set('confirm_reset_expires', moment().add(1, 'hour').format('YYYY-MM-DDTHH:mm:ss.mm'));
+                user.set('updated_at', moment().format('YYYY-MM-DDTHH:mm:ss.mm'));
                 user.save(user.changed, {patch: true}).then(function() {
                     resolve(user.toJSON());
                 }).catch(function(err) {
@@ -349,8 +349,8 @@ var User = bookshelf.Model.extend({
         return new Promise(function(resolve, reject) {
             new User({id: id}).fetch().then((user)=>{
                 user.set('password_reset_token', uid(32));
-                user.set('password_reset_expires', moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss.mm'));
-                user.set('updated_at', moment().format('YYYY-MM-DD HH:mm:ss.mm'));
+                user.set('password_reset_expires', moment().add(1, 'hour').format('YYYY-MM-DDTHH:mm:ss.mm'));
+                user.set('updated_at', moment().format('YYYY-MM-DDTHH:mm:ss.mm'));
                 user.save(user.changed, {patch: true}).then(function() {
                     resolve(user.toJSON());
                 }).catch(function(err) {
@@ -381,13 +381,13 @@ var User = bookshelf.Model.extend({
                         //confirm_reset_token: uid(32),
                         //confirm_reset_expires: moment().add(1, 'hour').format('YYYY-MM-DD HH:mm:ss.mm'),
                         picture: picture.gravatar,
-                        created_at: moment().format('YYYY-MM-DD HH:mm:ss.mm')
+                        created_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm')
                     }
                 ).then(function(user) {
                     new UserWallet().save({
                         user_id: user.get('id'),
                         balance: 0,
-                        created_at: moment().format('YYYY-MM-DD HH:mm:ss.mm')
+                        created_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm')
                     }).then(function(user_wallet) {
                         resolve(user.toJSON());
                     }).catch(function(err) {

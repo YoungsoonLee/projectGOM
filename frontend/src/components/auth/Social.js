@@ -13,9 +13,11 @@ class Social extends Component {
         this.store = this.props.store.appState;
     }
 
+    /*
     handleSocialAuth = (provider) => {
         console.log(provider);
     }
+    */
 
     render() {
         const { history } = this.props;

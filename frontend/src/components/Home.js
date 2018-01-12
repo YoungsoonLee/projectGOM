@@ -3,6 +3,8 @@ import { inject, observer } from "mobx-react";
 
 import Carousel from './ui/Carousel';
 
+import { Message, Container } from 'semantic-ui-react'
+
 @inject("store")
 @observer
 export default class Home extends Component {
@@ -13,12 +15,31 @@ export default class Home extends Component {
 
 	render() {
 		const store = this.store;
+
+        // TODO: next 쿼리 체크
+        const { authModalMode, signupStep, userInfo, error, errorFlash, successFlash } = this.store.appState;
+
+		var successFlashView = null;
+        if(successFlash) {
+            successFlashView = (
+                <Message success visible size='tiny'>{successFlash}</Message>
+            );
+        }
+
+        var errorFlashView = null;
+        if(errorFlash) {
+            errorFlashView = (
+                <Message error visible size='tiny'>{errorFlash}</Message>
+            );
+		}
+		
 		return (
-			<div>
+			<Container style={{ marginTop: '5em' }}>
 				{/* <div><Carousel /></div> */}
 				
 				<div className="page home" >
-					
+					{successFlashView}
+					{errorFlashView}
 					<header>
 						
 						<div className="hero-unit">
@@ -119,7 +140,7 @@ export default class Home extends Component {
 					</main>
 				</div>
 
-			</div>
+			</Container>
 		);
 	}
 }

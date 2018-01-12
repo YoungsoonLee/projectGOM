@@ -54,6 +54,7 @@ class Login extends Component {
     }
 
     handleForgotPassword = (e) =>{
+        this.store.setInitUserInfo();
         const { history } = this.props;
         history.push('/forgot_password');
     }

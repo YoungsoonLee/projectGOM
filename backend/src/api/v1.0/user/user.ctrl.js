@@ -39,8 +39,8 @@ exports.emailConfirm = async (ctx) => {
     }
 
     userJSON = user.toJSON();
-    if( moment(userJSON.confirm_reset_expires).format('YYYY-MM-DD hh:mm:ss') < moment().format('YYYY-MM-DD hh:mm:ss')) {
-        //email confirmation token is invalid or has expired. Resend confirmation email again through your profile.
+    //if( moment(userJSON.confirm_reset_expires).format('YYYY-MM-DD hh:mm:ss') < moment().format('YYYY-MM-DD hh:mm:ss')) {
+    if( userJSON.confirm_reset_expires.toISOString().substring(0, userJSON.confirm_reset_expires.toISOString().indexOf('.')) < moment().format('YYYY-MM-DDTHH:mm:ss')) {
         ctx.status = 400; // bad request
         ctx.body = {
             message: 'email confirmation token is invalid or has expired. Resend confirmation email token.'
@@ -228,7 +228,7 @@ exports.isValidResetPasswordToken = async (ctx) => {
         // returned model
         user = await User.findByResetToken(reset_token);
     }catch(e) {
-        log.error('[IS VALIDRESET PASSWORDTOKEN]', '[findByResetToken]', reset_token, e.message);
+        log.error('[ISVALID RESET PASSWORDTOKEN]', '[findByResetToken]', reset_token, e.message);
         ctx.status = 500;   // bad request
         ctx.body = {
             message: 'Excaprion forgotPassword forgotPassword'
@@ -245,8 +245,23 @@ exports.isValidResetPasswordToken = async (ctx) => {
     }
 
     userJSON = user.toJSON();
-    if( moment(userJSON.password_reset_expires).format('YYYY-MM-DD hh:mm:ss') < moment().format('YYYY-MM-DD hh:mm:ss')) {
-        //email confirmation token is invalid or has expired. Resend confirmation email again through your profile.
+    /* test
+    now = moment().format('YYYY-MM-DDTHH:mm:ss');
+    console.log('1: ', userJSON.password_reset_expires);
+    console.log('1-1: ', userJSON.password_reset_expires.toISOString().substring(0, userJSON.password_reset_expires.toISOString().indexOf('.')));
+    console.log('2: ', moment().format('YYYY-MM-DDTHH:mm:ss'));
+    console.log('3: ', String(now));
+    console.log('4: ', moment(userJSON.password_reset_expires).format('YYYY-MM-DDTHH:mm:ss'));
+    console.log('5: ', moment(new Date(String(userJSON.password_reset_expires))));
+    if( userJSON.password_reset_expires.toISOString().substring(0, userJSON.password_reset_expires.toISOString().indexOf('.')) < moment().format('YYYY-MM-DDTHH:mm:ss')) {
+        console.log('userJSON.password_reset_expires < now');
+    }else{
+        console.log('userJSON.password_reset_expires > now');
+    }
+    */
+
+    //if( moment(userJSON.password_reset_expires).format('YYYY-MM-DDTHH:mm:ss.mm') < moment().format('YYYY-MM-DDTHH:mm:ss.mm')) {
+    if( userJSON.password_reset_expires.toISOString().substring(0, userJSON.password_reset_expires.toISOString().indexOf('.')) < moment().format('YYYY-MM-DDTHH:mm:ss')) {
         ctx.status = 400; // bad request
         ctx.body = {
             message: 'Password reset token is invalid or has expired.'
@@ -313,7 +328,8 @@ exports.resetPassword = async (ctx) => {
     }
 
     userJSON = user.toJSON();
-    if( moment(userJSON.password_reset_expires).format('YYYY-MM-DD hh:mm:ss') < moment().format('YYYY-MM-DD hh:mm:ss')) {
+    //if( moment(userJSON.password_reset_expires).format('YYYY-MM-DD hh:mm:ss') < moment().format('YYYY-MM-DD hh:mm:ss')) {
+    if( userJSON.password_reset_expires.toISOString().substring(0, userJSON.password_reset_expires.toISOString().indexOf('.')) < moment().format('YYYY-MM-DDTHH:mm:ss')) {
         //email confirmation token is invalid or has expired. Resend confirmation email again through your profile.
         ctx.status = 400; // bad request
         ctx.body = {

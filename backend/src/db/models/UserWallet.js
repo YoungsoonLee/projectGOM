@@ -40,7 +40,7 @@ var UserWallet = bookshelf.Model.extend({
             new UserWallet.save({
                 user_id: user_id,
                 balance: 0,
-                created_at: moment().format('YYYY-MM-DD HH:mm:ss.mm')
+                created_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm')
             }).then(function(userWallet) {
                 resolve(userWallet);
             }).catch(function(err) {

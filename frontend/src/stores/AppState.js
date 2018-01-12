@@ -7,6 +7,7 @@ import * as AuthAPI from '../lib/api/auth';
 import * as UserAPI from '../lib/api/user';
 import storage from '../lib/storage';
 import social from '../lib/social';
+import redirect from '../lib/redirect';
 
 // store at auth and app
 export default class AppState {
@@ -85,6 +86,9 @@ export default class AppState {
     this.errorFlash = null;
     this.successFlash = null;
     this.profileEmail = null;
+
+    this.authModalMode = 'SIGNIN';
+    this.signupStep = 1;
   }
 
   @action async setInitLoggedInUserInfo() {
@@ -99,9 +103,6 @@ export default class AppState {
   }
 
   @action changeAuthModalMode() {
-
-    this.setInitUserInfo();
-
     if(this.authModalMode === 'SIGNIN'){
       this.authModalMode = 'SIGNUP';
       this.signupStep = 1;
@@ -109,6 +110,13 @@ export default class AppState {
       this.authModalMode = 'SIGNIN';
     }
 
+    this.userInfo.displayName = '';
+    this.userInfo.email = '';
+    this.userInfo.password = '';
+    this.error = null;
+    this.errorFlash = null;
+    this.successFlash = null;
+    this.profileEmail = null;
   }
 
   @action setInitModal() {
@@ -142,7 +150,7 @@ export default class AppState {
 
     if(!this.error) {
       let { data } = await AuthAPI.checkDisplayName(this.userInfo.displayName);
-      this.setInitUserInfo();
+      
       if(data.exists){
         this.setError('already exists a displayname.');
       }else{
@@ -172,27 +180,14 @@ export default class AppState {
 
         storage.set('___GOM___', data);
         this.authenticate();
+        redirect.set(history,lastLocation);
 
-        //for forum...external url
-        if(document.referrer === 'http://localhost:4567/'){
-          history.push('/');
+      }catch(err){
+        if (err.response.data) {
+          this.setError(err.response.data.message);
         }else{
-          console.log('previous url; ', lastLocation.pathname);
-          if( 
-            (String(lastLocation.pathname).search('reset_password') >= 0) ||
-            (String(lastLocation.pathname).search('email_confirm') >= 0) || 
-            (String(lastLocation.pathname).search('unemail_confirm') >= 0) || 
-            (String(lastLocation.pathname).search('forgot_password') >= 0) )
-          {
-            history.push('/');
-          }else{
-            history.goBack();
-          }
+          this.setError(err);
         }
-
-      }catch(e){
-        //console.log('1', e.response.data.message);
-        this.setError(e.response.data.message);
       }
     }
   }
@@ -213,31 +208,20 @@ export default class AppState {
       let data = null;
       try{
         data = await AuthAPI.localLogin({email: this.userInfo.email, password: this.userInfo.password});
+        
         this.setInitUserInfo();
 
         storage.set('___GOM___', data);
         this.authenticate();
+        redirect.set(history,lastLocation);
 
-        //for forum...external url
-        if(document.referrer === 'http://localhost:4567/'){
-          history.push('/');
+      }catch(err){
+        console.log(err);
+        if (err.response.data) {
+          this.setError(err.response.data.message);
         }else{
-          console.log('previous url; ', lastLocation.pathname);
-          if( 
-            (String(lastLocation.pathname).search('reset_password') >= 0) ||
-            (String(lastLocation.pathname).search('email_confirm') >= 0) || 
-            (String(lastLocation.pathname).search('unemail_confirm') >= 0) || 
-            (String(lastLocation.pathname).search('forgot_password') >= 0) )
-          {
-            history.push('/');
-          }else{
-            history.goBack();
-          }
+          this.setError(err);
         }
-
-      }catch(e){
-        //console.log('1',data.response);
-        this.setError(e.response.data.message);
       }
     }
   }
@@ -258,39 +242,23 @@ export default class AppState {
             this.setInitUserInfo();
 
             storage.set('___GOM___', response.data);
-            
-            //for forum...external url
-            if(document.referrer === 'http://localhost:4567/'){
-              history.push('/');
-            }else{
-              console.log('previous url; ', lastLocation.pathname);
-              if( 
-                (String(lastLocation.pathname).search('reset_password') >= 0) ||
-                (String(lastLocation.pathname).search('email_confirm') >= 0) || 
-                (String(lastLocation.pathname).search('unemail_confirm') >= 0) || 
-                (String(lastLocation.pathname).search('forgot_password') >= 0) )
-              {
-                history.push('/');
-              }else{
-                history.goBack();
-              }
-              //history.goBack(); // cannot goBack. because forgot_password or email_confirm
-            }
-
+            redirect.set(history,lastLocation);
             this.authenticate(); // !! important after redirect
 
           }).catch((err)=>{
-            //console.log(err.response.data.message);
-            this.setError(err.response.data.message);
+            if (err.response.data) {
+              this.setError(err.response.data.message);
+            }else{
+              this.setError(err);
+            }
           });
     
         }).catch((err)=>{
-            //console.log('error: ', err);
             this.setError('somthing wrong with '+provider+'. try again after a few minutes.');
         });
       }
     }else{
-      this.setInitUserInfo();
+      this.setInitUserInfo(); //!!!
 
       if(!this.error) {
         social[provider]().then((accessToken)=>{
@@ -298,32 +266,17 @@ export default class AppState {
             provider: provider, 
             accessToken: accessToken,
           }).then((response)=>{
-            //console.log(response.data);
+
             storage.set('___GOM___', response.data);
-            this.setInitUserInfo();
-
-            //for forum...external url
-            if(document.referrer === 'http://localhost:4567/'){
-              history.push('/');
-            }else{
-              console.log('previous url; ', lastLocation.pathname);
-              if( 
-                (String(lastLocation.pathname).search('reset_password') >= 0) ||
-                (String(lastLocation.pathname).search('email_confirm') >= 0) || 
-                (String(lastLocation.pathname).search('unemail_confirm') >= 0) || 
-                (String(lastLocation.pathname).search('forgot_password') >= 0) )
-              {
-                history.push('/');
-              }else{
-                history.goBack();
-              }
-              //history.goBack(); // cannot goBack. because forgot_password or email_confirm
-            }
-
+            redirect.set(history,lastLocation);
             this.authenticate(); // !! important after redirect
 
           }).catch((err)=>{
-            this.setError(err.response.data.message);
+            if (err.response.data) {
+              this.setError(err.response.data.message);
+            }else{
+              this.setError(err);
+            }
           });
     
         }).catch((err)=>{
@@ -341,7 +294,7 @@ export default class AppState {
     //check auth
     //TODO: think ! check GOM or not
 
-    //if ( storage.get('___GOM___') ) {
+    if ( storage.get('___GOM___') ) {
       let auth = null;
       try{
         auth = await AuthAPI.checkLoginStatus();
@@ -364,16 +317,17 @@ export default class AppState {
         this.loggedInUserInfo.balance = auth.data.balance.toString();
         this.loggedInUserInfo.gravatar = auth.data.gravatar;
       }
-    //}else{
-    //  console.log('no gom');
-    //  await this.setInitLoggedInUserInfo();
-    //}
+    }else{
+      console.log('no gom');
+      await this.setInitLoggedInUserInfo();
+    }
   }
 
   @action async logout(history) {
-    //check auth
+    //check auth\
     let { data } = await AuthAPI.logout();
     await this.authenticate();
+    this.setInitUserInfo();
     history.push('/');
     
     /*
@@ -392,13 +346,22 @@ export default class AppState {
     }catch(err){
       this.errorFlash = err.response.data.message;
     }
-    
+
+    //console.log(data);
+
     if(!data) {
       this.errorFlash = 'token is invalid or has expired. try resend again.';
       history.push('/unemail_confirm');
     }else{
-      this.successFlash = 'email confirm succeed. please SIGN IN.'
-      history.push('/login');
+      this.successFlash = 'email confirm success.'
+      history.push('/');
+      /*
+      if(this.loggedInUserInfo.authenticate) {
+        history.push('/');
+      }else{
+        history.push('/login');
+      }
+      */
     }
   }
 
@@ -559,8 +522,9 @@ export default class AppState {
       if(data) {
         this.setInitUserInfo();
         this.successFlash = 'Password is changed. please re-sign in.'
-        this.logout(history);
-        //history.push('/login');
+        let { data } = await AuthAPI.logout();
+        await this.authenticate();
+        history.push('/login');
       }
     }
   }

@@ -26,7 +26,7 @@ var PaymentTry = bookshelf.Model.extend({
                     pg_id: item.pg_id, //xsolla
                     price: item.price,
                     amount: item.amount,
-                    tried_at: moment().format('YYYY-MM-DD HH:mm:ss.mm')
+                    tried_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm')
                 }).then(function(payTryData) {
                     //done(null, payTryData.toJSON());
                     resolve(payTryData.toJSON());

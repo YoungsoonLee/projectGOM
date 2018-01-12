@@ -34,7 +34,7 @@ var PaymentTransaction = bookshelf.Model.extend({
                     currency: 'USD',
                     price: chargeData.price,
                     amount: chargeData.amount,
-                    transaction_at: moment().format('YYYY-MM-DD HH:mm:ss.mm'),
+                    transaction_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm'),
                     amount_after_used: chargeData.amount,
                 }).then(function(payment) {
                     //console.log('payment user_id: ', payment.get('user_id'));
@@ -55,7 +55,7 @@ var PaymentTransaction = bookshelf.Model.extend({
                             new UserWallet().save({
                                 user_id: payment.get('user_id'),
                                 balance: parseInt(payment.get('amount')),
-                                created_at: moment().format('YYYY-MM-DD HH:mm:ss.mm')
+                                created_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm')
                             }).then(function(newWallet) {
                                 resolve(newWallet.toJSON());
                             }).catch(function(err) {
@@ -94,7 +94,7 @@ var PaymentTransaction = bookshelf.Model.extend({
                     .save({amount_after_used:deducted_amount_after_used})
                     .then(()=>{
                         new UserWallet({ user_id: user_id })
-                            .save({ balance: deducted_balance, updated_at: moment().format('YYYY-MM-DD HH:mm:ss.mm') })
+                            .save({ balance: deducted_balance, updated_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm') })
                             .then((newWallet)=>{
                                 resolve(newWallet.toJSON());
                             })

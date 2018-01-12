@@ -98,3 +98,82 @@ exports.adminRegister = async (ctx) => {
     };
     
 }
+
+// using web
+exports.adminLogin = async (ctx) => {
+    const { body } = ctx.request;
+
+    const schema = Joi.object({
+        email: Joi.string().email().required(),
+        password: Joi.string().min(6).max(30),
+        // TODO: ip
+      });
+
+    const result = Joi.validate(body, schema);
+    
+    // 스키마 검증 실패
+    if(result.error) {
+        ctx.status = 400;
+        ctx.body = {
+            message: result.error.details[0].message
+        }
+        return;
+    }
+
+    const { email, password } = body;
+
+    let user = null;
+    try {
+        // 이메일로 계정 찾기
+        // returned model
+        user = await User.findByEmail(email);
+    } catch (e) {
+        log.error('[ADMIN LOGIN]','[findByEmail]', email, e.message);
+
+        //ctx.status = 400; // bad request
+        ctx.status = 500; // Internal server error
+        ctx.body = {
+            message: 'Exception adminLogin findByEmail.'
+        }
+        return;
+    }
+
+    if(!user) {
+        ctx.status = 403; // Forbidden
+        ctx.body = {
+            message: 'user does not exists.'
+        }
+        return;
+    }
+
+    // TODO: 게임의 로그인 방식 따라 변경 할 필요가 있다.
+    if(user.get('permission')) {
+        ctx.status = 400; // bad request
+        ctx.body = {
+            message: 'email belongs to a '+user.get('provider')+'. use sign in with '+user.get('provider')+'.'
+        }
+        return;
+    }
+
+    let isMatch = await user.comparePassword(password);
+    if(!isMatch) {
+        ctx.status = 403; // Forbidden
+        ctx.body = {
+            message: 'password does not match.'
+        }
+        return;
+    }
+
+    // if your web use this as backend, you should return jwtoken.
+    const accessToken = await user.generateToken;
+
+    // set cookie
+    cookie.setCookie(ctx, accessToken, user.toJSON());
+
+    // TODO: save user_login_history
+
+    ctx.body = {
+        _id: user.get('id'),
+        displayName: user.get('name')
+    };
+}

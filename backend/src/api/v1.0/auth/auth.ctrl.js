@@ -110,7 +110,7 @@ exports.localLogin = async (ctx) => {
 
     const schema = Joi.object({
         email: Joi.string().email().required(),
-        password: Joi.string().min(6).max(30),
+        password: Joi.string().min(8).max(30),
         // TODO: ip
       });
 
@@ -129,7 +129,6 @@ exports.localLogin = async (ctx) => {
 
     let user = null;
     try {
-        // 이메일로 계정 찾기
         // returned model
         user = await User.findByEmail(email);
     } catch (e) {
@@ -151,11 +150,23 @@ exports.localLogin = async (ctx) => {
         return;
     }
 
-    // TODO: 게임의 로그인 방식 따라 변경 할 필요가 있다.
+    // TODO: 게임의 로그인 방식 따라 변경 할 필요가 있다. ???
+    /* 소셜 계정도 일단 패스워드를 셋팅 하면, 그 패스워드 이용해서 로그인 가능
     if(user.get('provider')) {
         ctx.status = 400; // bad request
         ctx.body = {
             message: 'email belongs to a '+user.get('provider')+'. use sign in with '+user.get('provider')+'.'
+        }
+        return;
+    }
+    */
+    // 소셜 계정이고 패스워드 없는데, 로컬 로그인 시도 할 경우.
+    //console.log(user.toJSON());
+    if( (user.get('provider') !== null ) && (user.get('password') === null ) ) {
+        console.log('1');
+        ctx.status = 400; // bad request
+        ctx.body = {
+            message: 'email belongs to be a '+user.get('provider')+'. use sign in with '+user.get('provider')+'.'
         }
         return;
     }
@@ -555,7 +566,7 @@ exports.socialRegister = async (ctx) => {
         log.info('[SOCIAL REGISTER]','[NEW USER]', JSON.stringify(user));
 
     } catch (e) {
-        log.error('[SOCIAL REGISTER]','[newUser]', displayName, email, provider, provider_id, accessToken, e.message);
+        log.error('[SOCIAL REGISTER]','[newUser]', displayName, email, provider, provider_id, accessToken, e);
 
         ctx.status = 500; 
         ctx.body = {
