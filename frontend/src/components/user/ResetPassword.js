@@ -18,7 +18,6 @@ class ResetPassword extends Component {
     componentDidMount() {
         const { history } = this.props;
         this.store.setInitUserInfo();
-        //check token
         this.store.isValidResetPasswordToken(this.props.match.params.token, history);
     }
 
@@ -28,7 +27,6 @@ class ResetPassword extends Component {
 
     handleInputConfirmPassword = (e, {value}) => {
         this.setState({ confirmPassword: value });
-        //console.log(this.state.confirmPassword);
     }
 
     render() {

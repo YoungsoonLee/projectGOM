@@ -451,6 +451,8 @@ exports.updateProfile = async (ctx) => {
     }
 
     userJSON = user.toJSON();
+
+    /* comments. allow to set password social account
     if(userJSON.provider) {
         ctx.status = 403; // Forbidden
         ctx.body = {
@@ -458,6 +460,7 @@ exports.updateProfile = async (ctx) => {
         }
         return;
     }
+    */
 
     try {
         await User.updateProfile(userJSON.id, password);

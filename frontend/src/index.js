@@ -13,7 +13,6 @@ import stores from "./stores/stores";
 import socket from './lib/socket';
 import axios from 'axios';
 
-
 window.axios = axios;
 const socketURI = process.env.NODE_ENV === 'production'
                     ? 'wss://api.bitimulate.com/ws'

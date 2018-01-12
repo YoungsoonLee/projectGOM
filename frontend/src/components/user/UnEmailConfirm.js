@@ -13,7 +13,7 @@ class UnEmailConfirm extends Component {
     }
 
     componentDidMount() {
-        this.store.setInitUserInfo();
+        //this.store.setInitUserInfo();
     }
     
     handleInputEmail = (e, { value }) => {

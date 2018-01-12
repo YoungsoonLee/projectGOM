@@ -7,7 +7,6 @@ const authCtrl = require('./auth.ctrl');
 auth.post('/register/local', authCtrl.localRegister);
 auth.post('/register/:provider(facebook|google)', authCtrl.socialRegister);
 
-
 auth.post('/login/local', authCtrl.localLogin);
 auth.post('/login/:provider(facebook|google)', authCtrl.socialLogin);
 

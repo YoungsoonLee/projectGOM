@@ -68,6 +68,7 @@
     "react-load-script": "^0.0.6",
     "react-redux": "^5.0.6",
     "react-router-dom": "latest",
+    "react-router-last-location": "^1.1.0",
     "react-slick": "^0.16.0",
     "redis": "^2.8.0",
     "redux": "^3.7.2",

@@ -19,14 +19,15 @@ class Social extends Component {
 
     render() {
         const { history } = this.props;
+        const { lastLocation } = this.props;
         const { authModalMode, signupStep, userInfo, error } = this.store;
         
         return (
             <div>
-                <Button size='small' color='facebook' onClick={()=>this.store.socialAuth('facebook', history)}>
+                <Button size='small' color='facebook' onClick={()=>this.store.socialAuth('facebook', history, lastLocation)}>
                     <Icon name='facebook' /> Facebook
                 </Button>
-                <Button size='small' color='google plus' onClick={()=>this.store.socialAuth('google', history)}>
+                <Button size='small' color='google plus' onClick={()=>this.store.socialAuth('google', history, lastLocation)}>
                     <Icon name='google plus' /> Google Plus
                 </Button>
             </div>

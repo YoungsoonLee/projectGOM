@@ -13,13 +13,12 @@ class ForgotPassword extends Component {
     }
     
     componentDidMount() {
-        this.store.setInitUserInfo();
+        //this.store.setInitUserInfo();
     }
 
     handleInputEmail = (e, { value }) => {
         this.store.userInfo.email = value;
     }
-
 
     render() {
         const { error, errorFlash, successFlash, userInfo } = this.store;

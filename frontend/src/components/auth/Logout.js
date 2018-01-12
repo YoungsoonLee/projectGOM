@@ -15,12 +15,10 @@ class Logout extends Component {
     }
 
     componentDidMount() {
-        console.log('2');
         const { history } = this.props;
         this.store.logout(history);
     }
-
-
+    
     render() {
         const { history } = this.props;
 

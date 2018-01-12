@@ -142,6 +142,7 @@ export default class AppState {
 
     if(!this.error) {
       let { data } = await AuthAPI.checkDisplayName(this.userInfo.displayName);
+      this.setInitUserInfo();
       if(data.exists){
         this.setError('already exists a displayname.');
       }else{
@@ -153,7 +154,7 @@ export default class AppState {
   }
 
   // localSignup
-  @action async localRegister(history) {
+  @action async localRegister(history, lastLocation) {
 
     if(!validator.isEmail(this.userInfo.email)) {
       this.setError('please input a valid email address.');
@@ -167,9 +168,27 @@ export default class AppState {
       let data = null;
       try{
         data = await AuthAPI.localRegister({...this.userInfo});
+        this.setInitUserInfo();
+
         storage.set('___GOM___', data);
         this.authenticate();
-        history.push('/');
+
+        //for forum...external url
+        if(document.referrer === 'http://localhost:4567/'){
+          history.push('/');
+        }else{
+          console.log('previous url; ', lastLocation.pathname);
+          if( 
+            (String(lastLocation.pathname).search('reset_password') >= 0) ||
+            (String(lastLocation.pathname).search('email_confirm') >= 0) || 
+            (String(lastLocation.pathname).search('unemail_confirm') >= 0) || 
+            (String(lastLocation.pathname).search('forgot_password') >= 0) )
+          {
+            history.push('/');
+          }else{
+            history.goBack();
+          }
+        }
 
       }catch(e){
         //console.log('1', e.response.data.message);
@@ -179,7 +198,7 @@ export default class AppState {
   }
 
   // localLogin
-  @action async localLogin(history) {
+  @action async localLogin(history, lastLocation) {
 
     if(!validator.isEmail(this.userInfo.email)) {
       this.setError('please input a valid email address.');
@@ -194,16 +213,26 @@ export default class AppState {
       let data = null;
       try{
         data = await AuthAPI.localLogin({email: this.userInfo.email, password: this.userInfo.password});
+        this.setInitUserInfo();
 
         storage.set('___GOM___', data);
         this.authenticate();
 
-        //history.goBack();
-        //for forum...temp
+        //for forum...external url
         if(document.referrer === 'http://localhost:4567/'){
           history.push('/');
         }else{
-          history.goBack();
+          console.log('previous url; ', lastLocation.pathname);
+          if( 
+            (String(lastLocation.pathname).search('reset_password') >= 0) ||
+            (String(lastLocation.pathname).search('email_confirm') >= 0) || 
+            (String(lastLocation.pathname).search('unemail_confirm') >= 0) || 
+            (String(lastLocation.pathname).search('forgot_password') >= 0) )
+          {
+            history.push('/');
+          }else{
+            history.goBack();
+          }
         }
 
       }catch(e){
@@ -214,8 +243,8 @@ export default class AppState {
   }
 
   // socialAuth
-  @action async socialAuth(provider, history) {
-    //console.log('socialAuth: ', history);
+  @action async socialAuth(provider, history, lastLocation) {
+    //console.log('socialAuth lastLocation: ', lastLocation.pathname);
 
     if(this.authModalMode === 'SIGNUP') {
       if(!this.error) {
@@ -226,17 +255,28 @@ export default class AppState {
             accessToken: accessToken,
           }).then((response)=>{
             //console.log(response.data);
+            this.setInitUserInfo();
 
             storage.set('___GOM___', response.data);
             
-            //for forum...temp
+            //for forum...external url
             if(document.referrer === 'http://localhost:4567/'){
               history.push('/');
             }else{
-              history.goBack();
+              console.log('previous url; ', lastLocation.pathname);
+              if( 
+                (String(lastLocation.pathname).search('reset_password') >= 0) ||
+                (String(lastLocation.pathname).search('email_confirm') >= 0) || 
+                (String(lastLocation.pathname).search('unemail_confirm') >= 0) || 
+                (String(lastLocation.pathname).search('forgot_password') >= 0) )
+              {
+                history.push('/');
+              }else{
+                history.goBack();
+              }
+              //history.goBack(); // cannot goBack. because forgot_password or email_confirm
             }
 
-            //history.goBack();
             this.authenticate(); // !! important after redirect
 
           }).catch((err)=>{
@@ -260,15 +300,26 @@ export default class AppState {
           }).then((response)=>{
             //console.log(response.data);
             storage.set('___GOM___', response.data);
-            
-            //for forum...temp
+            this.setInitUserInfo();
+
+            //for forum...external url
             if(document.referrer === 'http://localhost:4567/'){
               history.push('/');
             }else{
-              history.goBack();
+              console.log('previous url; ', lastLocation.pathname);
+              if( 
+                (String(lastLocation.pathname).search('reset_password') >= 0) ||
+                (String(lastLocation.pathname).search('email_confirm') >= 0) || 
+                (String(lastLocation.pathname).search('unemail_confirm') >= 0) || 
+                (String(lastLocation.pathname).search('forgot_password') >= 0) )
+              {
+                history.push('/');
+              }else{
+                history.goBack();
+              }
+              //history.goBack(); // cannot goBack. because forgot_password or email_confirm
             }
 
-            //history.goBack();
             this.authenticate(); // !! important after redirect
 
           }).catch((err)=>{
@@ -338,13 +389,12 @@ export default class AppState {
     let data = null;
     try{ 
       data = await UserAPI.emailConfirm(confirm_token);
-      //console.log(data);
-    }catch(e){
-      //console.log(e);
-      this.errorFlash = 'token is invalid or has expired. try resend again.';
+    }catch(err){
+      this.errorFlash = err.response.data.message;
     }
     
     if(!data) {
+      this.errorFlash = 'token is invalid or has expired. try resend again.';
       history.push('/unemail_confirm');
     }else{
       this.successFlash = 'email confirm succeed. please SIGN IN.'
@@ -365,7 +415,7 @@ export default class AppState {
       let data = null;
       try{ 
         data = await UserAPI.resendEmailConfirm(this.userInfo.email);
-        //console.log(data);
+        this.setInitUserInfo();
       }catch(err){
         //console.log(err);
         this.setError(err.response.data.message);
@@ -388,7 +438,7 @@ export default class AppState {
       let data = null;
       try{ 
         data = await UserAPI.forgotPassword(this.userInfo.email);
-        //console.log(data);
+        this.setInitUserInfo();
       }catch(err){
         //console.log(err);
         this.setError(err.response.data.message);
@@ -436,7 +486,7 @@ export default class AppState {
       let data = null;
       try{ 
         data = await UserAPI.resetPassword(reset_token, this.userInfo.password);
-        //console.log(data);
+        this.setInitUserInfo();
       }catch(err){
         //console.log(err);
         this.errorFlash = err.response.data.message;
@@ -500,7 +550,7 @@ export default class AppState {
       let data = null;
       try{ 
         data = await UserAPI.updateProfile(this.loggedInUserInfo._id, this.userInfo.password);
-        //console.log(data);
+        this.setInitUserInfo();
       }catch(err){
         //console.log(err);
         this.errorFlash = err.response.data.message;
@@ -513,123 +563,6 @@ export default class AppState {
         //history.push('/login');
       }
     }
-  }
-
-  /* moved to billingState
-  // this is to payment history.
-  // this is in here not billingState.
-  // because, need to loggedInUserInfo._id
-  @action async fetchPaymentHistory(history) {
-      await this.authenticate();
-
-      if(!this.loggedInUserInfo._id) {
-          //this.setError('need login first');
-          //go to login
-          this.errorFlash = 'Need login first';
-          //go to login
-          history.push('/login');
-
-      }else{
-          //console.log('fetchHistory');
-
-          if(this.historyMode === 'charge') {
-            $("#tabulator-1").tabulator({});
-            $("#tabulator-1").tabulator("destroy");
-
-            $("#tabulator-1").tabulator({
-                layout:"fitColumns",
-                height:511, // set height of table, this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-                responsiveLayout:true,
-                //pagination:"local",
-                //paginationSize:20,
-                //movableColumns:true,
-                placeholder:"No Data Available", //display message to user on empty table
-                columns:[ //Define Table Columns
-                    //{title:"No", field:"no" , width:100},
-                    {title:"No", formatter:"rownum", align:"center", width:100},
-                    {title:"Date", field:"transaction_at", align:"left", formatter:function(cell, formatterParams){
-                            var value = cell.getValue();
-                            return moment(value).format('YYYY-MM-DD HH:mm:ss')
-                        }
-                    },
-                    {title:"Transaction Id", field:"pid", align:"left"},
-                    {title:"Item Name", field:"item_name"},
-                    {title:"Price", field:"price",align:"left", formatter:function(cell, formatterParams){
-                            var value = cell.getValue();
-                            return numeral(value).format('$ 0,0.0');
-                        }
-                    },
-                    {title:'Amount of <i aria-hidden="true" class="diamond icon"></i>', field:"amount",align:"left" , formatter:function(cell, formatterParams){
-                            var value = cell.getValue();
-                            //return '<i class="fa fa-diamond" aria-hidden="true"></i> '+numeral(value).format('0,0');
-                            return '<i aria-hidden="true" class="diamond icon"></i> '+numeral(value).format('0,0');
-                        }
-                    },
-                ],
-            });
-
-            $("#tabulator-1").tabulator("setData", 'http://localhost:4000/api/v1.0/billing/getChargeHistory/'+this.loggedInUserInfo._id);
-            $("#tabulator-1").tabulator("redraw", true);
-          }else{
-            $("#tabulator-1").tabulator({});
-              $("#tabulator-1").tabulator("destroy");
-              //$("#tabulator-1").remove();
-
-              $("#tabulator-1").tabulator({
-                  layout:"fitColumns",
-                  height:511, // set height of table, this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-                  responsiveLayout:true,
-                  //pagination:"local",
-                  //paginationSize:20,
-                  //movableColumns:true,
-                  placeholder:"No Data Available", //display message to user on empty table
-                  columns:[ //Define Table Columns
-                      //{title:"No", field:"no" , width:100},
-                      {title:"No", formatter:"rownum", align:"center", width:150},
-                      {title:"Date", field:"used_at", align:"left", formatter:function(cell, formatterParams){
-                              var value = cell.getValue();
-                              return moment(value).format('YYYY-MM-DD HH:mm:ss')
-                          }
-                      },
-                      {title:"Used Id", field:"deduct_id", align:"left"},
-                      {title:"Item Name", field:"item_name"},
-                      {title:'Amount of <i aria-hidden="true" class="diamond icon"></i>', field:"item_amount",align:"left" , formatter:function(cell, formatterParams){
-                              var value = cell.getValue();
-                              //return '<i class="fa fa-diamond" aria-hidden="true"></i> '+numeral(value).format('0,0');
-                              return '<i aria-hidden="true" class="diamond icon"></i> '+numeral(value).format('0,0');
-                          }
-                      },
-                  ],
-              });
-
-              $("#tabulator-1").tabulator("setData", 'http://localhost:4000/api/v1.0/billing/getDeductHistory/'+this.loggedInUserInfo._id);
-              $("#tabulator-1").tabulator("redraw", true);
-          }
-      }
-      
-  }
-  */
-
-
-  async fetchData(pathname, id) {
-    let { data } = await axios.get(
-      `https://jsonplaceholder.typicode.com${pathname}`
-    );
-    //console.log(data);
-    data.length > 0 ? this.setData(data) : this.setSingle(data);
-  }
-
-  @action setData(data) {
-    this.items = data;
-  }
-
-  @action setSingle(data) {
-    this.item = data;
-  }
-
-  @action clearItems() {
-    this.items = [];
-    this.item = {};
   }
 
 }

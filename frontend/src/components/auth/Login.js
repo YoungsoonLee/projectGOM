@@ -8,6 +8,8 @@ import { Container, Button, Header, Modal, Message, Grid, Form, Segment, Input, 
 import Social from './Social';
 import AlreadyLogin from '../wrapper/AlreadyLoginWrapper';
 
+import { withLastLocation } from 'react-router-last-location';
+
 @AlreadyLogin
 @withRouter
 @inject("store")
@@ -16,16 +18,21 @@ class Login extends Component {
     constructor(props) {
         super(props);
         this.store = this.props.store.appState;
+
+        //const { lastLocation } = this.props;
+        //console.log(JSON.stringify(lastLocation, undefined, 2));
     }
 
+    /*
     componentDidMount() {
         console.log('componentDidMount');
     }
-
+    
     componentDidUpdate(){
         console.log('componentDidUpdate');
     }
-    
+    */
+
     handleModeChanged = (e) =>{
         this.store.changeAuthModalMode();
     }
@@ -54,6 +61,7 @@ class Login extends Component {
     // login or register component
 	render() {
         const { history } = this.props;
+        const { lastLocation } = this.props;
 
         // TODO: next 쿼리 체크
         const { authModalMode, signupStep, userInfo, error, errorFlash, successFlash } = this.store;
@@ -105,9 +113,9 @@ class Login extends Component {
                             { error !== null ? ErrorView : null }
                         </div>
                     </Form.Field>
-                    <Button color='violet' fluid size='small' onClick={()=>this.store.localLogin(history)}>{authModalMode === 'SIGNIN' ? 'SIGN IN' : 'SIGN UP'}</Button>
+                    <Button color='violet' fluid size='small' onClick={()=>this.store.localLogin(history, lastLocation)}>{authModalMode === 'SIGNIN' ? 'SIGN IN' : 'SIGN UP'}</Button>
                     <Divider horizontal>Or</Divider>
-                    <Social />
+                    <Social lastLocation={lastLocation}/>
                 </Segment>
             </Form>
         );
@@ -163,10 +171,10 @@ class Login extends Component {
                     </div>
                 </Form.Field>
                 <div>
-                    <Button color='violet' fluid size='small' onClick={() => this.store.localRegister(history)}>SIGNUP</Button>
+                    <Button color='violet' fluid size='small' onClick={() => this.store.localRegister(history, lastLocation)}>SIGNUP</Button>
                 </div>
                 <Divider horizontal>Or</Divider>
-                <Social />
+                <Social lastLocation={lastLocation}/>
             </Segment>
         );
 
@@ -200,4 +208,4 @@ class Login extends Component {
 	}
 }
 
-export default Login;
+export default withLastLocation(Login);

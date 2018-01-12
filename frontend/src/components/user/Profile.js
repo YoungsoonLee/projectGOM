@@ -18,9 +18,7 @@ class Profile extends Component {
 
     componentDidMount() {
         const { history } = this.props;
-
         this.store.getProfile(history);
-        //this.componentDidUpdate();
     }
 
     componentDidUpdate() {
