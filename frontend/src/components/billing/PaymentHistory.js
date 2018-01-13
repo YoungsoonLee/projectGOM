@@ -19,13 +19,11 @@ class PaymentHistory extends Component {
 
     componentDidMount() {
         const { history } = this.props;
-        //this.store.fetchPaymentHistory(history);
         this.billingState.fetchPaymentHistory(this.appState, history);
     }
 
     componentDidUpdate() {
         const { history } = this.props;
-        //this.store.fetchPaymentHistory(history);
         this.billingState.fetchPaymentHistory(this.appState, history);
     }
 

@@ -25,9 +25,6 @@ export default class AppState {
   @observable successFlash;
   @observable profileEmail;
 
-  //for payhistpory
-  @observable historyMode;
-
   @observable items;
   @observable item;
   @observable testval;
@@ -65,17 +62,11 @@ export default class AppState {
     this.successFlash = null;
     this.profileEmail = null;
 
-    this.historyMode = 'charge';
-
     this.items = [];
     this.item = {};
     this.testval = "Cobbled together by ";
 
     //get a balance with ws ???
-  }
-
-  @action setHistoryMode(mode) {
-    this.historyMode = mode;
   }
 
   @action setInitUserInfo() {

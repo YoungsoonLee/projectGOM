@@ -394,7 +394,6 @@ exports.checkDisplayName = async (ctx) => {
     }
   };
 
-
 exports.check = async (ctx) => {
     const { user } = ctx.request;
   

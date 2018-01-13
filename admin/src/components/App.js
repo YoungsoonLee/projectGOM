@@ -1,13 +1,19 @@
 import React, { Component } from "react";
-import { Route, Link, withRouter } from "react-router-dom";
+import { Route, Link, withRouter, Switch, Redirect } from "react-router-dom";
 import { inject, observer } from "mobx-react";
-import LazyRoute from "lazy-route";
+//import LazyRoute from "lazy-route";
 import DevTools from "mobx-react-devtools";
 
 import { Container } from 'semantic-ui-react'
+//import { LastLocationProvider } from 'react-router-last-location';
 
+//components
+import NotFound from "./404";
+import Home from "./Home";
 import { TopBar } from "./header/index";
-import { Login } from './auth/index';
+import { Login, Logout } from './auth/index';
+import { EmailConfirm, UnEmailConfirm, ForgotPassword, ResetPassword, Profile} from './user/index';
+import { News, NewsDetail } from './news/index';
 
 @withRouter
 @inject("store")
@@ -37,134 +43,24 @@ export default class App extends Component {
 
 		return (
 			<div>
-				{/*<DevTools />*/}
 				<TopBar />
-
-				<Route
-					exact
-					path="/"
-					render={props => (
-						<LazyRoute {...props} component={import("./Home")} />
-					)}
-				/>
-				
-				<div>
-					<Container text style={{ marginTop: '5em' }}>
-
-						{/*
-						<Route
-							exact
-							path="/login"
-							component={Login}
-						/>
-						*/}
-
-						<Route
-							exact
-							path="/login"
-							render={props => (
-								<LazyRoute {...props} component={import("./auth/Login.js")} />
-							)}
-						/>
-
-						<Route
-							exact
-							path="/logout"
-							render={props => (
-								<LazyRoute {...props} component={import("./auth/Logout.js")} />
-							)}
-						/>
-
-						<Route
-							exact
-							path="/email_confirm/:token"
-							render={props => (
-								<LazyRoute {...props} component={import("./user/EmailConfirm.js")} />
-							)}
-						/>
-
-						<Route
-							exact
-							path="/unemail_confirm/"
-							render={props => (
-								<LazyRoute {...props} component={import("./user/UnEmailConfirm.js")} />
-							)}
-						/>
-
-						<Route
-							exact
-							path="/forgot_password/"
-							render={props => (
-								<LazyRoute {...props} component={import("./user/ForgotPassword.js")} />
-							)}
-						/>
-						
-						<Route
-							exact
-							path="/reset_password/:token"
-							render={props => (
-								<LazyRoute {...props} component={import("./user/ResetPassword.js")} />
-							)}
-						/>
-
-					</Container>
+					<Switch>
 					
-					<Container>
+						<Route exact path="/" component={Home}/>
+						<Route path="/login" component={Login}/>
+						<Route path="/logout" component={Logout}/>
+						<Route path="/email_confirm/:token" component={EmailConfirm} />
+						<Route path="/unemail_confirm/" component={UnEmailConfirm} />
+						<Route path="/forgot_password/" component={ForgotPassword} />
+						<Route path="/reset_password/:token" component={ResetPassword} />
+						<Route path="/profile" component={Profile} />
+
+						<Route exact path="/news" component={News} />
+						<Route path="/news/:id" component={NewsDetail} />
 						
-						<Route
-							exact
-							path="/news"
-							render={props => (
-								<LazyRoute {...props} component={import("./news/News.js")} />
-							)}
-						/>
-
-						<Route
-							exact
-							path="/news/:id"
-							render={props => (
-								<LazyRoute {...props} component={import("./news/NewsDetail.js")} />
-							)}
-						/>
-
-						<Route
-							exact
-							path="/profile"
-							render={props => (
-								<LazyRoute {...props} component={import("./user/Profile.js")} />
-							)}
-						/>
-
-						<Route
-							exact
-							path="/test"
-							render={props => (
-								<LazyRoute {...props} component={import("./test/test.js")} />
-							)}
-						/>
-
+						<Route component={NotFound}/> 
 						
-						{/*
-						<Route
-							exact
-							path="/posts"
-							render={props => (
-								<LazyRoute {...props} component={import("./SubPage")} />
-							)}
-						/>
-						<Route
-							exact
-							path="/posts/:id"
-							render={props => (
-								<LazyRoute {...props} component={import("./SubItem")} />
-							)}
-						/>
-						*/}
-						
-					</Container>
-					
-				</div>
-				
+					</Switch>
 			</div>
 		);
 	}

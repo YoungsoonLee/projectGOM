@@ -24,9 +24,6 @@ export default class AppState {
   @observable successFlash;
   @observable profileEmail;
 
-  //for payhistpory
-  @observable historyMode;
-
   @observable items;
   @observable item;
   @observable testval;
@@ -37,12 +34,6 @@ export default class AppState {
 
     this.authModalMode = 'SIGNIN';
     this.signupStep = 1;
-
-    /*
-    this.userInfo.displayName = '';
-    this.userInfo.email = '';
-    this.userInfo.password = '';
-    */
 
     //for signup and login
     this.userInfo = {
@@ -64,17 +55,11 @@ export default class AppState {
     this.successFlash = null;
     this.profileEmail = null;
 
-    this.historyMode = 'charge';
-
     this.items = [];
     this.item = {};
     this.testval = "Cobbled together by ";
 
     //get a balance with ws ???
-  }
-
-  @action setHistoryMode(mode) {
-    this.historyMode = mode;
   }
 
   @action setInitUserInfo() {
@@ -214,24 +199,17 @@ export default class AppState {
   }
 
   @action async authenticate() {
-    //check auth
-    //TODO: think ! check GOM or not
-
-    //if ( storage.get('___GOM___') ) {
+    if ( storage.get('___GOM___') ) {
       let auth = null;
       try{
-        auth = await AuthAPI.checkLoginStatus();
-        //console.log('auth: ', auth);
+        auth = await AuthAPI.checkAdminLoginStatus();
       }catch(e){
-        //console.log('exception check: ', e.message);
         await this.setInitLoggedInUserInfo();
       }
 
       if(!auth) {
-        //console.log('1');
         await this.setInitLoggedInUserInfo()
       }else{
-        //console.log('2');
         storage.set('___GOM___', auth.data);
         
         this.authenticated = true;
@@ -240,10 +218,10 @@ export default class AppState {
         this.loggedInUserInfo.balance = auth.data.balance.toString();
         this.loggedInUserInfo.gravatar = auth.data.gravatar;
       }
-    //}else{
-    //  console.log('no gom');
-    //  await this.setInitLoggedInUserInfo();
-    //}
+    }else{
+      console.log('no gom');
+      await this.setInitLoggedInUserInfo();
+    }
   }
 
   @action async logout(history) {

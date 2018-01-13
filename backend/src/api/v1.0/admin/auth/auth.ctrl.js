@@ -146,11 +146,11 @@ exports.adminLogin = async (ctx) => {
         return;
     }
 
-    // TODO: 게임의 로그인 방식 따라 변경 할 필요가 있다.
-    if(user.get('permission')) {
+    
+    if(user.get('permission').search('admin') < 0) {
         ctx.status = 400; // bad request
         ctx.body = {
-            message: 'email belongs to a '+user.get('provider')+'. use sign in with '+user.get('provider')+'.'
+            message: 'Yoe are not a staff.'
         }
         return;
     }
@@ -175,5 +175,69 @@ exports.adminLogin = async (ctx) => {
     ctx.body = {
         _id: user.get('id'),
         displayName: user.get('name')
+    };
+}
+
+
+exports.checkAdmin = async (ctx) => {
+    const { user } = ctx.request;
+  
+    if(!user) {
+        ctx.status = 400;
+        ctx.body = {
+                message: 'user is null'
+            }
+        return;
+    }
+
+    let balance = 0;
+    let gravatar = '';
+
+    try {
+      const exists = await User.findById(user._id);
+
+      if(!exists) {
+        // invalid user, clear cookie
+        cookie.removeCookie();
+
+        ctx.status = 401;
+        ctx.body = {
+            message: 'invalid user'
+        }
+        return;
+      }
+
+      if(exists.get('permission').search('admin') < 0) {
+          // invalid user, clear cookie
+        cookie.removeCookie();
+
+        ctx.status = 401;
+        ctx.body = {
+            message: 'invalid user.(not a staff)'
+        }
+        return;
+      }
+
+      await exists.wallet().first().then((wallet)=>{
+        balance = wallet.get('balance');
+      });
+
+      gravatar = exists.get('picture');
+
+    } catch (e) {
+        log.error('[CHECK ADMIN]','[findById]', user._id, e.message);
+
+        //ctx.status = 400; // bad request
+        ctx.status = 500; // Internal server error
+        ctx.body = {
+            message: 'Exception checkAdmin findById.'
+        }
+        return;
+    }
+
+    ctx.body = {
+        user,
+        balance,
+        gravatar
     };
 }
