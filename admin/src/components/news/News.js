@@ -21,7 +21,7 @@ class News extends Component {
     render() {
         return (
             <Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle' >
-                <Grid.Column style={{ maxWidth: 450, marginTop: '10em'  }}>
+                <Grid.Column style={{ marginTop: '10em'  }}>
                     <h1>News</h1>
                 </Grid.Column>
             </Grid>
