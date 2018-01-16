@@ -6,10 +6,12 @@ var News = bookshelf.Model.extend({
     //hasTimestamps: ['created_at', 'updated_at']
 }, {
     //static methos
-    getNewsData: function() {
+    getNewsData: function(page) {
+        if (!page) page = 1;
+
         return News.query(qb => {
             qb.select('*');
-        }).orderBy('created_at', 'DESC').fetchPage({page: 1, pageSize: 20}).then(raw => {
+        }).orderBy('created_at', 'DESC').fetchPage({page: page, pageSize: 20}).then(raw => {
             //console.log(raw.pagination);
             //console.log(raw.toJSON());
             return raw;

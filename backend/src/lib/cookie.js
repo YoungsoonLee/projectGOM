@@ -1,6 +1,5 @@
 const moment = require('moment');
 const jwt = require('jsonwebtoken');
-
 const log = require('lib/log');
 
 module.exports.setCookie = async function(ctx, access_token, user) {

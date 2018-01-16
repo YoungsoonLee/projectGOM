@@ -13,7 +13,7 @@ import Home from "./Home";
 import { TopBar } from "./header/index";
 import { Login, Logout } from './auth/index';
 import { EmailConfirm, UnEmailConfirm, ForgotPassword, ResetPassword, Profile} from './user/index';
-import { News, NewsDetail } from './news/index';
+import { News } from './news/index';
 
 @withRouter
 @inject("store")
@@ -56,7 +56,6 @@ export default class App extends Component {
 						<Route path="/profile" component={Profile} />
 
 						<Route exact path="/news" component={News} />
-						<Route path="/news/:id" component={NewsDetail} />
 						
 						<Route component={NotFound}/> 
 						

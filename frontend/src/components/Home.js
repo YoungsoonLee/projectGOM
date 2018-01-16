@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 
 import Carousel from './ui/Carousel';
 
-import { Message, Container } from 'semantic-ui-react'
+import { Message, Container, Grid } from 'semantic-ui-react'
 
 @inject("store")
 @observer
@@ -36,33 +36,16 @@ export default class Home extends Component {
 		return (
 			<Container style={{ marginTop: '5em' }}>
 				{/* <div><Carousel /></div> */}
+				{successFlashView}
+				{errorFlashView}
+
+				<Grid textAlign='center' style={{ height: '100%' }} verticalAlign='middle' >
+					<Grid.Column style={{ marginTop: '10em'  }}>
+						<h1>projectGOM</h1>
+					</Grid.Column>
+				</Grid>
 				
 				<div className="page home" >
-					{successFlashView}
-					{errorFlashView}
-					<header>
-						
-						<div className="hero-unit">
-							<div className="react-logo" />
-							<h1>project GOM</h1>
-						</div>
-						{/*
-						<div className="hero-subunit">
-							<h4>
-								A simple starting point for React with routing, data-fetching and state management!
-							</h4>
-						</div>
-						<div className="github-buttons">
-							<a
-								href="https://github.com/mhaagens/react-mobx-react-router4-boilerplate"
-								target="_blank"
-							>
-								Download from GitHub
-							</a>
-						</div>
-						*/}
-					</header>
-					
 					<main>
 						<div className="section-header">
 							<h3>Included libraries</h3>

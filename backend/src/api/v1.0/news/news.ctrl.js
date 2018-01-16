@@ -10,7 +10,7 @@ exports.getNewsData = async (ctx) => {
     let news = null;
     try{
         // returned model
-        news = await News.getNewsData();
+        news = await News.getNewsData(page);
     }catch(e){
         log.error('[GET NEWS]', '[getNewsData]', e.message);
         ctx.status = 500; //bad request
