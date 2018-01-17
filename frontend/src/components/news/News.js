@@ -5,6 +5,8 @@ import Script from 'react-load-script'
 
 import { Container } from 'semantic-ui-react'
 
+var he = require('he');
+
 @withRouter
 @inject("store")
 @observer
@@ -38,13 +40,14 @@ class News extends Component {
                                                 <h1>{post.title}</h1>
                                             </Link>
                                             <p>{String(post.created_at).replace('T', ' ').replace('Z', '')}</p>
-                                            <p>{post.subject.substring(0, 120)}</p>
+                                            <p dangerouslySetInnerHTML={{__html: post.subject.substring(0, 120)}}></p>
                                         </li>
                                     );
                                 })
                             : "Loading..."}
                         
                     </ul>
+                    <div id='test'></div>
                     
                     <ul id="attachNews"></ul>
 

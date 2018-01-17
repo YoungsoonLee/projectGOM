@@ -14,7 +14,7 @@ const compress = require('koa-compress');
 const api = require('./api');
 const jwtMiddleware = require('lib/middlewares/jwt');
 
-const { logger } = require('koa2-winston');
+const { logger } = require('lib/koa2-winston-local');
 const winston = require('winston'); // 로그 모듈
 //const winston = require('@jifeon/winston');
 const winstonDaily = require('winston-daily-rotate-file'); //일별 로그 모듈

@@ -14,6 +14,7 @@ api.use('/base', base.routes());
 api.use('/auth', auth.routes());
 api.use('/billing', billing.routes());
 api.use('/user', user.routes());
+
 api.use('/news', news.routes());
 
 api.use('/admin', adminAuth.routes());

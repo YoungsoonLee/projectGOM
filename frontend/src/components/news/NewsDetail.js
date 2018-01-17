@@ -42,7 +42,7 @@ class NewsDetail extends Component {
                             <hr />
                             <h2>{newsitem.title}</h2>
                             <hr />
-                            <p>{newsitem.subject}</p>
+                            <p dangerouslySetInnerHTML={{__html: post.subject}}></p>
                             <hr />
                             <p>{newsitem.created_at}</p>
                         </article>}
