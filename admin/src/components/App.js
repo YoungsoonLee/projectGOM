@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Route, Link, withRouter, Switch, Redirect } from "react-router-dom";
 import { inject, observer } from "mobx-react";
-//import LazyRoute from "lazy-route";
+import LazyRoute from "lazy-route";
 import DevTools from "mobx-react-devtools";
 
 import { Container } from 'semantic-ui-react'
@@ -13,7 +13,7 @@ import Home from "./Home";
 import { TopBar } from "./header/index";
 import { Login, Logout } from './auth/index';
 import { EmailConfirm, UnEmailConfirm, ForgotPassword, ResetPassword, Profile} from './user/index';
-import { News, AddNews } from './news/index';
+import { News, AddNews, DetailNews, EditNews } from './news/index';
 
 @withRouter
 @inject("store")
@@ -57,6 +57,9 @@ export default class App extends Component {
 
 						<Route exact path="/news" component={News} />
 						<Route exact path="/add_news" component={AddNews} />
+						<Route exact path="/detail_news/:id" component={DetailNews} />
+
+						<Route path="/edit_news/:id" component={EditNews} />
 
 						<Route component={NotFound}/> 
 						

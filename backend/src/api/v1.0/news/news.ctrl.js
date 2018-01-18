@@ -144,3 +144,56 @@ exports.addNews = async (ctx) => {
 
     ctx.body = news;
 }
+
+
+exports.updateNews = async (ctx) => {
+    const { id } = ctx.params;
+    //console.log(id);
+
+    const { body } = ctx.request;
+
+    const schema = Joi.object({
+        category: Joi.string().required(),
+        title: Joi.string().required(),
+        data: Joi.string().min(4),
+        authour: Joi.string().required()
+      });
+
+    const result = Joi.validate(body, schema);
+    
+    // 스키마 검증 실패
+    if(result.error) {
+        ctx.status = 400;
+        ctx.body = {
+            message: result.error.details[0].message
+        }
+        return;
+    }
+
+    const { category, title, authour, data } = body;
+
+    //console.log(category, title, authour, data);
+
+    //save news
+    let news = null;
+    try {
+        // returned JSON
+        news = await News.updateNews({
+            id, category, title, authour, data
+          });
+        log.info('[UPDATE NEWS]',JSON.stringify(news));
+
+    } catch (e) {
+        log.error('[UPDATE NEWS]','[updateNews]', id, category, title, authour, data, e);
+
+        //ctx.status = 400; // bad request
+        ctx.status = 500; // Internal server error
+        ctx.body = {
+            message: 'Exception updateNews. '+ e
+        }
+        return;
+    }
+    
+
+    ctx.body = news;
+}

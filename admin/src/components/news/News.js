@@ -16,10 +16,10 @@ class News extends Component {
         this.appState = this.props.store.appState;
         this.newsState = this.props.store.newsState;
     }
-
     
     componentDidMount() {
-        this.newsState.fetchNews();
+        const { history } = this.props;
+        this.newsState.fetchNews(history);
     }
 
     handelClick = (e) => {
@@ -32,20 +32,20 @@ class News extends Component {
         return (
             <div>
                 <Grid textAlign='center' columns={3}>
-                    <Grid.Row verticalAlign='middle' style={{ maxWidth: 850, marginTop: '5em'  }}>
+                    <Grid.Row verticalAlign='middle' style={{ maxWidth: '90%', marginTop: '5em'  }}>
                         <Grid.Column>
                             <h1>News</h1>
                         </Grid.Column>
                         <Grid.Column></Grid.Column>
                         <Grid.Column>
-                            <Button color='violet' fluid size='small' onClick={this.handelClick}>Add news</Button>
+                            <Button basic color='violet' fluid size='small' onClick={this.handelClick}>Add news</Button>
                         </Grid.Column>
                     </Grid.Row>
                 </Grid>
                 
                 <Grid textAlign='center' style={{ height: '100%' }} >
                     <Grid.Row verticalAlign='middle' >
-                        <Grid.Column style={{ maxWidth: 1000 }}>
+                        <Grid.Column style={{ maxWidth: '90%' }}>
                             <div className="page home">
                                 <div id="tabulator-1"></div>
                             </div>

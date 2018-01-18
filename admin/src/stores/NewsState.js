@@ -7,10 +7,15 @@ import * as NewsAPI from '../lib/api/news';
 export default class NewsState {
     @observable title;
     @observable category;
+    @observable newsitem;
+    @observable errorFlash;
 
     constructor() {
-        this.title = '';
-        this.category = '';
+        this.title = null;
+        this.category = null;
+
+        this.newsitem = null;
+        this.errorFlash = null;
     }
 
     @action setTitle(title){
@@ -30,58 +35,105 @@ export default class NewsState {
                 authour: 'youngtip',        //TODO: set authour
                 data: data
             }
-            console.log(sdata);
+            //console.log(sdata);
 
-            returnData = NewsAPI.addNews(sdata);
+            returnData = await NewsAPI.addNews(sdata);
         }catch(err){
             console.log(err)
         }
+
+        history.push('/news');
+    }
+
+    @action async updateNews(data, history) {
+        let returnData = null;
+        try{
+            var sdata = {
+                title: this.newsitem.title,
+                category: this.newsitem.category,
+                authour: 'youngtip',        //TODO: set authour
+                data: data
+            }
+            //console.log(sdata);
+
+            returnData = await NewsAPI.updateNews(this.newsitem.id, sdata);
+        }catch(err){
+            console.log(err)
+        }
+
+        history.push('/news');
     }
 
     // this is to payment history.
-    @action async fetchNews() {
+    @action async fetchNews(history) {
 
-            $("#tabulator-1").tabulator({});
-            $("#tabulator-1").tabulator("destroy");
+        $("#tabulator-1").tabulator({});
+        $("#tabulator-1").tabulator("destroy");
 
-            $("#tabulator-1").tabulator({
-                layout:"fitColumns",
-                height:511, // set height of table, this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-                responsiveLayout:true,
-                pagination:"local",
-                paginationSize:10,
-                //movableColumns:true,
-                placeholder:"No Data Available", //display message to user on empty table
-                columns:[ //Define Table Columns
-                    //{title:"No", field:"no" , width:100},
-                    {title:"Id", field:"id", align:"center", width:70},
-                    {title:"Date", field:"created_at", align:"left", width:150, formatter:function(cell, formatterParams){
-                            var value = cell.getValue();
-                            return moment(value).format('YYYY-MM-DD HH:mm:ss')
-                        }
-                    },
-                    {title:"Category", field:"category", align:"left", width:100, headerFilter:true},
-                    {title:"Title", field:"title", headerFilter:"input"},
-                    {title:"Subject", field:"subject", headerFilter:"input"},
-                    {title:"Authour", field:"authour", width:100, headerFilter:"input"}
-                ],
-            });
-            
-            /*
-            $("#example-table").tabulator({
-                ajaxResponse:function(url, params, response){
-                    //url - the URL of the request
-                    //params - the parameters passed with the request
-                    //response - the JSON object returned in the body of the response.
-
-                    return response.tableData; //return the tableData peroperty of a response json object
+        $("#tabulator-1").tabulator({
+            layout:"fitColumns",
+            height:511, // set height of table, this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+            responsiveLayout:true,
+            pagination:"local",
+            paginationSize:10,
+            //movableColumns:true,
+            placeholder:"No Data Available", //display message to user on empty table
+            columns:[ //Define Table Columns
+                //{title:"No", field:"no" , width:100},
+                {title:"Id", field:"id", align:"center", width:70},
+                {title:"Date", field:"created_at", align:"left", width:150, formatter:function(cell, formatterParams){
+                        var value = cell.getValue();
+                        return moment(value).format('YYYY-MM-DD HH:mm:ss')
+                    }
                 },
-            });
-            */
-            
-            $("#tabulator-1").tabulator("setData", 'http://localhost:4000/api/v1.0/news/getNewsDataAll');
-            $("#tabulator-1").tabulator("redraw", true);
-            
+                {title:"Category", field:"category", align:"left", width:100, headerFilter:true},
+                {title:"Title", field:"title", headerFilter:"input"},
+                {title:"Subject", field:"subject", headerFilter:"input"},
+                {title:"Authour", field:"authour", width:100, headerFilter:"input"}
+            ],
+            rowClick:function(e, row){
+                //e - the click event object
+                //row - row component
+                //console.log(e);
+                //console.log(row.row.data.id);
+                history.push('/detail_news/'+row.row.data.id);
+                //row.toggleSelect(); //toggle row selected state on row click
+            },
+        });
+        
+        /*
+        $("#example-table").tabulator({
+            ajaxResponse:function(url, params, response){
+                //url - the URL of the request
+                //params - the parameters passed with the request
+                //response - the JSON object returned in the body of the response.
+
+                return response.tableData; //return the tableData peroperty of a response json object
+            },
+        });
+        */
+        
+        $("#tabulator-1").tabulator("setData", 'http://localhost:4000/api/v1.0/news/getNewsDataAll');
+        $("#tabulator-1").tabulator("redraw", true);
+        
+    }
+
+    @action async fetchNewsItem(id) {
+        let item = null;
+
+        try{
+            item = await NewsAPI.getNewsItem(id);
+        }catch(err){
+            this.errorFlash = err.response.data.message;
         }
+
+        if(item) {
+            this.newsitem = item.data;
+            //console.log('newsState: ', this.newsitem);
+            
+        }else{
+            this.errorFlash = "News not founded.";
+        }
+    }
 
 }

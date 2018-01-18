@@ -50,6 +50,24 @@ var News = bookshelf.Model.extend({
                     reject(null);
                 });
         });
+    },
+    updateNews: function({id, category, title, authour, data}) {
+        return new Promise(function(resolve, reject) {
+                new News({id}).save(
+                    {
+                        category: category,
+                        title: title,
+                        subject: data,
+                        authour: authour,
+                        is_active: true,
+                        updated_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm')
+                    }
+                ).then(function(news) {
+                    resolve(news.toJSON());
+                }).catch(function(err) {
+                    reject(null);
+                });
+        });
     }
 });
 

@@ -50,16 +50,17 @@ class AddNews extends Component {
     }
 
     handleSubmit = (e) => {
+        const { history } = this.props;
+
         // TODO: check title
         this.store.newsState.title = document.getElementById('title').value;
 
         // TODO: check admin login
-
-        this.store.newsState.addNews(document.getElementById('newsData').value);
+        this.store.newsState.addNews(document.getElementById('newsData').value, history);
     }
 
     handleDropdown = (e,{value}) => {
-        console.log(value);
+        //console.log(value);
         this.store.newsState.category = value;
     }
 
@@ -104,12 +105,12 @@ class AddNews extends Component {
                     <Grid.Row verticalAlign='middle' style={{ maxWidth: 850}}>
                         <Grid.Column>
                             <div>
-                                <Button color='red' fluid size='small' onClick={this.handleCancel}>CANCEL</Button>
+                                <Button basic color='red' fluid size='small' onClick={this.handleCancel}>CANCEL</Button>
                             </div>
                         </Grid.Column>
                         <Grid.Column>
                             <div>
-                                <Button color='violet' fluid size='small' onClick={this.handleSubmit}>SUBMIT</Button>
+                                <Button basic color='violet' fluid size='small' onClick={this.handleSubmit}>SUBMIT</Button>
                             </div>
                         </Grid.Column>
                     </Grid.Row>

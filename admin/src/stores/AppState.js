@@ -70,7 +70,7 @@ export default class AppState {
     this.errorFlash = null;
     this.successFlash = null;
     this.profileEmail = null;
-    this.authModalMode = 'SIGNIN';
+    //this.authModalMode = 'SIGNIN';
   }
 
   @action async setInitLoggedInUserInfo() {
