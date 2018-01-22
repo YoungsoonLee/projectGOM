@@ -11,6 +11,9 @@ import { EditorState, convertToRaw, ContentState } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import htmlToDraft from 'html-to-draftjs';
 
+//for image
+import uploadImage from '../../lib/uploadImage';
+
 @withRouter
 @inject("store")
 @observer
@@ -183,6 +186,15 @@ class EditNews extends Component {
                                     editorClassName="demo-editor"
                                     toolbarClassName="toolbar-class"
                                     onEditorStateChange={this.onEditorStateChange}
+                                    toolbar={{
+                                        inline: { inDropdown: true },
+                                        list: { inDropdown: true },
+                                        textAlign: { inDropdown: true },
+                                        link: { inDropdown: true },
+                                        history: { inDropdown: true },
+                                        image: { uploadCallback: uploadImage.uploadImageCallBack, alt: { present: true, mandatory: true } },
+                                      }
+                                    }
                                 />
                             </Grid.Column>
                         </Grid.Row>
