@@ -12,7 +12,7 @@ var News = bookshelf.Model.extend({
 
         return News.query(qb => {
             qb.select('*');
-        }).orderBy('created_at', 'DESC').fetchPage({page: page, pageSize: 20}).then(raw => {
+        }).where('is_active', true).orderBy('created_at', 'DESC').fetchPage({page: page, pageSize: 20}).then(raw => {
             //console.log(raw.pagination);
             //console.log(raw.toJSON());
             return raw;
@@ -23,7 +23,7 @@ var News = bookshelf.Model.extend({
 
         return News.query(qb => {
             qb.select('*');
-        }).orderBy('created_at', 'DESC').fetchAll().then(raw => {
+        }).where('is_active', true).orderBy('created_at', 'DESC').fetchAll().then(raw => {
             //console.log(raw.pagination);
             //console.log(raw.toJSON());
             return raw;
@@ -67,6 +67,20 @@ var News = bookshelf.Model.extend({
                 }).catch(function(err) {
                     reject(null);
                 });
+        });
+    },
+    deleteNews: function(id) {
+        return new Promise(function(resolve, reject) {
+            new News({id}).save(
+                {
+                    is_active: false,
+                    updated_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm')
+                }
+            ).then(function() {
+                resolve(null);
+            }).catch(function(err) {
+                reject(null);
+            });
         });
     }
 });

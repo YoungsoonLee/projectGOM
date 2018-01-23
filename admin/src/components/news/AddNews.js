@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react";
 import { Link, withRouter } from "react-router-dom";
 import Script from 'react-load-script'
 
-import { Grid, TextArea, Button, Menu, Dropdown, Label, Input} from 'semantic-ui-react'
+import { Grid, TextArea, Button, Menu, Dropdown, Label, Input, Message} from 'semantic-ui-react'
 
 // for editor
 import { Editor } from 'react-draft-wysiwyg';
@@ -74,13 +74,21 @@ class AddNews extends Component {
             {text: 'news', value: 'news'},
             {text: 'event', value: 'event'},
         ]
+
+        const { errorFlash } = this.store.newsState;
+        var errorFlashView = null;
+        if(errorFlash) {
+            errorFlashView = (
+                <Message error visible size='tiny'>{errorFlash}</Message>
+            );
+        }
+
         return (
             <div>
                 <Grid textAlign='center'  >
                     <Grid.Row verticalAlign='middle' >
-                        <Grid.Column style={{ maxWidth: 850, marginTop: '3em'  }}>
+                        <Grid.Column style={{ maxWidth: 850, marginTop: '5em'  }}>
                             <h1>Add News</h1>
-                            <hr />
                             <div>
                                 <Dropdown 
                                     id='category' 
@@ -115,6 +123,9 @@ class AddNews extends Component {
 
                 <Grid textAlign='center' columns={3}>
                     <Grid.Row verticalAlign='middle' style={{ maxWidth: 850}}>
+                        { errorFlash === null ? '':errorFlashView}
+                    </Grid.Row>
+                    <Grid.Row verticalAlign='middle' style={{ maxWidth: 850}}>
                         <Grid.Column>
                             <div>
                                 <Button basic color='red' fluid size='small' onClick={this.handleCancel}>CANCEL</Button>
@@ -125,6 +136,7 @@ class AddNews extends Component {
                                 <Button basic color='violet' fluid size='small' onClick={this.handleSubmit}>SUBMIT</Button>
                             </div>
                         </Grid.Column>
+                        
                     </Grid.Row>
                 </Grid>
 

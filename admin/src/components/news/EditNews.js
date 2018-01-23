@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { inject, observer } from "mobx-react";
 import { Link, withRouter } from "react-router-dom";
 
-import { Container, Grid, TextArea, Button, Menu, Dropdown, Label, Input} from 'semantic-ui-react'
+import { Container, Grid, TextArea, Button, Menu, Dropdown, Label, Input, Message} from 'semantic-ui-react'
 
 // for editor
 import { Editor } from 'react-draft-wysiwyg';
@@ -24,7 +24,7 @@ class EditNews extends Component {
 
         const { history } = this.props;
         
-        console.log('constructor');
+        //console.log('constructor');
 
         let html = '';
         let contentBlock = null;
@@ -58,8 +58,8 @@ class EditNews extends Component {
 
     
     componentWillMount() {
-        console.log('componentWillMount');
-        console.log(this.store.newsitem);
+        //console.log('componentWillMount');
+        //console.log(this.store.newsitem);
 
         const { history } = this.props;
         if(!this.store.newsitem){
@@ -85,9 +85,9 @@ class EditNews extends Component {
     
     
     componentDidMount() {
-        console.log('componentDidMount');
+        //console.log('componentDidMount');
         //this.store.fetchNewsItem(this.props.match.params.id)
-        console.log('newsitem: ', this.store.newsitem);
+        //console.log('newsitem: ', this.store.newsitem);
 
     }
 
@@ -125,7 +125,7 @@ class EditNews extends Component {
 
     handleCancel = (e) => {
         const { history } = this.props;
-        history.push('/news');
+        history.push('/detail_news/'+this.store.newsitem.id);
     }
 
     handleDropdown = (e,{value}) => {
@@ -147,8 +147,14 @@ class EditNews extends Component {
 
     render() {
         const { history } = this.props;
-        const { newsitem, category } = this.store;
-        //console.log('render: ', newsitem);
+        const { newsitem, category, errorFlash } = this.store;
+        
+        var errorFlashView = null;
+        if(errorFlash) {
+            errorFlashView = (
+                <Message error visible size='tiny'>{errorFlash}</Message>
+            );
+        }
 
         let editView = null;
 
@@ -165,9 +171,8 @@ class EditNews extends Component {
                 
                 <Grid textAlign='center'  >
                         <Grid.Row verticalAlign='middle' >
-                            <Grid.Column style={{ maxWidth: 850, marginTop: '3em'  }}>
+                            <Grid.Column style={{ maxWidth: 850, marginTop: '5em'  }}>
                                 <h1>Edit News</h1>
-                                <hr />
                                 <div>
                                     <Dropdown 
                                         id='category' 
@@ -201,6 +206,9 @@ class EditNews extends Component {
                     </Grid>
 
                     <Grid textAlign='center' columns={3}>
+                        <Grid.Row verticalAlign='middle' style={{ maxWidth: 850}}>
+                            { errorFlash === null ? '':errorFlashView}
+                        </Grid.Row>
                         <Grid.Row verticalAlign='middle' style={{ maxWidth: 850}}>
                             <Grid.Column>
                                 <div>

@@ -9,5 +9,6 @@ news.get('/getNewsItem/:id', newsCtrl.getNewsItem);
 
 news.post('/addNews', newsCtrl.addNews);
 news.post('/updateNews/:id', newsCtrl.updateNews);
+news.post('/deleteNews/:id', newsCtrl.deleteNews);
 
 module.exports = news;

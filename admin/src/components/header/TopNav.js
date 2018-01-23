@@ -83,12 +83,12 @@ class TopNav extends Component {
 			viewPane = (<div><Menu.Item name='login' active={activeItem === 'login'} onClick={this.handleItemClick}>Sign In</Menu.Item></div>)
 		}
 		
-
 		return (
 			<div  className="item">
 				<Menu pointing borderless={true} fixed='top' >
 					<Container>
 						<Menu.Item name='admin' active={activeItem === 'admin'} onClick={this.handleItemClick} />
+						<Menu.Item name='users' active={activeItem === 'users'} onClick={this.handleItemClick} />
 						<Menu.Item name='news' active={activeItem === 'news'} onClick={this.handleItemClick} />
 
 						<Menu.Menu position='right'>

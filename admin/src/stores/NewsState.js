@@ -1,5 +1,6 @@
 import { observable, action } from "mobx";
 import axios from "axios";
+import validator from 'validator';
 
 import * as NewsAPI from '../lib/api/news';
 
@@ -27,36 +28,77 @@ export default class NewsState {
     }
 
     @action async addNews(data, history) {
-        let returnData = null;
-        try{
-            var sdata = {
-                title: this.title,
-                category: this.category,
-                authour: 'youngtip',        //TODO: set authour
-                data: data
-            }
-            //console.log(sdata);
 
-            returnData = await NewsAPI.addNews(sdata);
-        }catch(err){
-            console.log(err)
+        if ( 
+            !(validator.isLength(this.title, {min:3})) || 
+            !(validator.isLength(this.category, {min:3})) 
+            ){
+          this.errorFlash = 'category or tile has minimum 3 letters.';
+        }else if ( !(validator.isLength(data, {min:9})) ){
+            this.errorFlash = 'contents is null';
+        }else{
+          this.errorFlash = null;
+        }
+    
+        if(!this.errorFlash) {
+
+            let returnData = null;
+            try{
+                var sdata = {
+                    title: this.title,
+                    category: this.category,
+                    authour: 'youngtip',        //TODO: set authour
+                    data: data
+                }
+                //console.log(sdata);
+
+                returnData = await NewsAPI.addNews(sdata);
+            }catch(err){
+                console.log(err)
+            }
+
+            history.push('/news');
         }
 
-        history.push('/news');
     }
 
     @action async updateNews(data, history) {
+        if ( 
+            !(validator.isLength(this.newsitem.title, {min:3})) || 
+            !(validator.isLength(this.newsitem.category, {min:3})) 
+            ){
+          this.errorFlash = 'category or tile has minimum 3 letters.';
+        }else if ( !(validator.isLength(data, {min:9})) ){
+            this.errorFlash = 'contents is null';
+        }else{
+          this.errorFlash = null;
+        }
+    
+        if(!this.errorFlash) {
+            let returnData = null;
+            try{
+                var sdata = {
+                    title: this.newsitem.title,
+                    category: this.newsitem.category,
+                    authour: 'youngtip',        //TODO: set authour
+                    data: data
+                }
+                //console.log(sdata);
+
+                returnData = await NewsAPI.updateNews(this.newsitem.id, sdata);
+            }catch(err){
+                console.log(err)
+            }
+
+            history.push('/news');
+        }
+        
+    }
+
+    @action async deleteNews(history) {
         let returnData = null;
         try{
-            var sdata = {
-                title: this.newsitem.title,
-                category: this.newsitem.category,
-                authour: 'youngtip',        //TODO: set authour
-                data: data
-            }
-            //console.log(sdata);
-
-            returnData = await NewsAPI.updateNews(this.newsitem.id, sdata);
+            returnData = await NewsAPI.deleteNews(this.newsitem.id);
         }catch(err){
             console.log(err)
         }
@@ -72,7 +114,7 @@ export default class NewsState {
 
         $("#tabulator-1").tabulator({
             layout:"fitColumns",
-            height:511, // set height of table, this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+            height:549, // set height of table, this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
             responsiveLayout:true,
             pagination:"local",
             paginationSize:10,
@@ -86,8 +128,8 @@ export default class NewsState {
                         return moment(value).format('YYYY-MM-DD HH:mm:ss')
                     }
                 },
-                {title:"Category", field:"category", align:"left", width:100, headerFilter:true},
-                {title:"Title", field:"title", headerFilter:"input"},
+                {title:"Category", field:"category", align:"left", width:150, headerFilter:true},
+                {title:"Title", field:"title", headerFilter:"input", width:300},
                 {title:"Subject", field:"subject", headerFilter:"input"},
                 {title:"Authour", field:"authour", width:100, headerFilter:"input"}
             ],

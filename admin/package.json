@@ -76,7 +76,7 @@
     "redis": "^2.8.0",
     "redux": "^3.7.2",
     "rfx-core": "^1.5.3",
-    "semantic-ui-react": "^0.77.1",
+    "semantic-ui-react": "^0.77.2",
     "validator": "^9.2.0",
     "whatwg-fetch": "^2.0.3"
   },

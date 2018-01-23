@@ -40,7 +40,7 @@ class News extends Component {
                                                 <h1>{post.title}</h1>
                                             </Link>
                                             <p>{String(post.created_at).replace('T', ' ').replace('Z', '')}</p>
-                                            <p dangerouslySetInnerHTML={{__html: post.subject.substring(0, 120)}}></p>
+                                            {/* <p dangerouslySetInnerHTML={{__html: post.subject.substring(0, 120)}}></p> */}
                                         </li>
                                     );
                                 })

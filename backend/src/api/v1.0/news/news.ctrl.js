@@ -197,3 +197,27 @@ exports.updateNews = async (ctx) => {
 
     ctx.body = news;
 }
+
+exports.deleteNews = async (ctx) => {
+    const { id } = ctx.params;
+    
+    //save news
+    let news = null;
+    try {
+        // returned JSON
+        news = await News.deleteNews(id);
+        log.info('[DELETE NEWS]',JSON.stringify(news));
+
+    } catch (e) {
+        log.error('[DELETE NEWS]','[updateNews]', id ,e);
+
+        //ctx.status = 400; // bad request
+        ctx.status = 500; // Internal server error
+        ctx.body = {
+            message: 'Exception deleteNews. '+ e
+        }
+        return;
+    }
+    
+    ctx.status = 204; //success
+}
