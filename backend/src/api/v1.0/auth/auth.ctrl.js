@@ -409,24 +409,36 @@ exports.check = async (ctx) => {
     let gravatar = '';
 
     try {
-      const exists = await User.findById(user._id);
+        // return model
+        const exists = await User.findById(user._id);
 
-      if(!exists) {
-        // invalid user, clear cookie
-        cookie.removeCookie();
+        if(!exists) {
+            // invalid user, clear cookie
+            cookie.removeCookie();
 
-        ctx.status = 401;
-        ctx.body = {
-            message: 'invalid user'
+            ctx.status = 401;
+            ctx.body = {
+                message: 'invalid user'
+            }
+            return;
         }
-        return;
-      }
 
-      await exists.wallet().first().then((wallet)=>{
-        balance = wallet.get('balance');
-      });
+        await exists.wallet().first().then((wallet)=>{
+            if(!wallet) {
+                log.error('[CHECK]','[wallet]', user._id ,'wallet info null');
 
-      gravatar = exists.get('picture');
+                ctx.status = 500; // Internal server error
+                ctx.body = {
+                    message: 'Exception wallet by checking findById.'
+                }
+                return;
+            }else{
+                balance = wallet.get('balance');
+            }
+            
+        });
+
+        gravatar = exists.get('picture');
 
     } catch (e) {
         log.error('[CHECK]','[findById]', user._id, e.message);

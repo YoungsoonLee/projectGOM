@@ -257,7 +257,6 @@ export default class AppState {
             provider: provider, 
             accessToken: accessToken,
           }).then((response)=>{
-
             storage.set('___GOM___', response.data);
             redirect.set(history,lastLocation);
             this.authenticate(); // !! important after redirect
