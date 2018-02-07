@@ -389,7 +389,7 @@ var User = bookshelf.Model.extend({
                         balance: 0,
                         created_at: moment().format('YYYY-MM-DDTHH:mm:ss.mm')
                     }).then(function(user_wallet) {
-                        resolve(user.toJSON());
+                        resolve(user);
                     }).catch(function(err) {
                         // TODO: logging
                         trx.rollback();

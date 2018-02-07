@@ -67,7 +67,7 @@ exports.adminRegister = async (ctx) => {
     // 계정 생성
     let user = null;
     try {
-        // returned JSON
+        // returned model
         user = await User.adminRegister({
             displayName, email, password
           });
@@ -84,6 +84,19 @@ exports.adminRegister = async (ctx) => {
         return;
     }
 
+    if(!user) {
+        ctx.status = 500; // Forbidden
+        ctx.body = {
+            message: 'Something Wrong...'
+        }
+        return;
+    }
+    
+    await user.wallet().first().then((wallet)=>{
+        balance = wallet.get('balance');
+    });
+    gravatar = user.get('picture');
+
     // if your web use this as backend, you should return jwtoken.
     const accessToken = await user.generateToken;
     
@@ -93,8 +106,12 @@ exports.adminRegister = async (ctx) => {
     // TODO: insert user_login_history
 
     ctx.body = {
-        displayName,
-        _id: user.id
+        user: {
+            _id: user.get('id'),
+            displayName: user.get('name'),
+        },
+        balance,
+        gravatar
     };
     
 }
@@ -123,6 +140,8 @@ exports.adminLogin = async (ctx) => {
     const { email, password } = body;
 
     let user = null;
+    let balance = 0;
+    let gravatar = '';
     try {
         // 이메일로 계정 찾기
         // returned model
@@ -146,6 +165,14 @@ exports.adminLogin = async (ctx) => {
         return;
     }
 
+    let isMatch = await user.comparePassword(password);
+    if(!isMatch) {
+        ctx.status = 403; // Forbidden
+        ctx.body = {
+            message: 'password does not match.'
+        }
+        return;
+    }
     
     if(user.get('permission').search('admin') < 0) {
         ctx.status = 400; // bad request
@@ -155,14 +182,11 @@ exports.adminLogin = async (ctx) => {
         return;
     }
 
-    let isMatch = await user.comparePassword(password);
-    if(!isMatch) {
-        ctx.status = 403; // Forbidden
-        ctx.body = {
-            message: 'password does not match.'
-        }
-        return;
-    }
+    await user.wallet().first().then((wallet)=>{
+        balance = wallet.get('balance');
+    });
+    gravatar = user.get('picture');
+    
 
     // if your web use this as backend, you should return jwtoken.
     const accessToken = await user.generateToken;
@@ -173,8 +197,12 @@ exports.adminLogin = async (ctx) => {
     // TODO: save user_login_history
 
     ctx.body = {
-        _id: user.get('id'),
-        displayName: user.get('name')
+        user: {
+            _id: user.get('id'),
+            displayName: user.get('name'),
+        },
+        balance,
+        gravatar
     };
 }
 
