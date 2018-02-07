@@ -3,4 +3,4 @@
 /migrations
 /log
 dist
-
+.DS_Store
