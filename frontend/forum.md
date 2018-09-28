@@ -57,5 +57,8 @@
         8. setting > post > turn on [IP tracking]
         9. setting > chat > turn off chat
 
-    * admin login
+    * forum admin login
         http://localhost:4567/login?local=1
+
+    * heroku 사용시 : package.json
+      "heroku-postbuild": "webpack -p --config ./webpack.prod.config.js --progress"

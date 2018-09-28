@@ -19,6 +19,9 @@ class Login extends Component {
         super(props);
         this.store = this.props.store.appState;
 
+        this.store.setInitUserInfo(); // clear message
+
+
         //const { lastLocation } = this.props;
         //console.log(JSON.stringify(lastLocation, undefined, 2));
     }

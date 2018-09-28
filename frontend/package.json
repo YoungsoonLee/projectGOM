@@ -82,5 +82,5 @@
     "url": "git@github.com:mhaagens/react-mobx-react-router4-boilerplate.git",
     "type": "git"
   },
-  "proxy": "http://localhost:4000"
+  "proxy": "http://localhost:8080"
 }

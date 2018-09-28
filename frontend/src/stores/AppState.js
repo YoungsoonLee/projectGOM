@@ -73,9 +73,11 @@ export default class AppState {
     this.userInfo.displayName = '';
     this.userInfo.email = '';
     this.userInfo.password = '';
+
     this.error = null;
     this.errorFlash = null;
     this.successFlash = null;
+
     this.profileEmail = null;
 
     this.authModalMode = 'SIGNIN';
@@ -104,9 +106,11 @@ export default class AppState {
     this.userInfo.displayName = '';
     this.userInfo.email = '';
     this.userInfo.password = '';
+
     this.error = null;
     this.errorFlash = null;
     this.successFlash = null;
+    
     this.profileEmail = null;
   }
 
@@ -140,14 +144,29 @@ export default class AppState {
     }
 
     if(!this.error) {
+
+      try{
+        let { data } = await AuthAPI.checkDisplayName(this.userInfo.displayName);
+        //data = await AuthAPI.checkDisplayName(this.userInfo.displayName);
+        this.setError(null);
+        this.setSignupStep(2) // move to next step
+      } catch(error) {
+        console.log(error.response.data)
+        this.setError('already exists a displayname.');
+      }
+        
+      /*
       let { data } = await AuthAPI.checkDisplayName(this.userInfo.displayName);
-      
+      console.log(data)
+      console.log(data.code)
+
       if(data.exists){
         this.setError('already exists a displayname.');
       }else{
         this.setError(null);
         this.setSignupStep(2) // move to next step
       }
+      */
     }
 
   }

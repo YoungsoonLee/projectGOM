@@ -2,7 +2,9 @@ import axios from 'axios';
 
 export const checkLoginStatus = () => axios.get('/api/v1.0/auth/check');
 export const checkEmail = (email) => axios.get('/api/v1.0/auth/exists/email/' + email);
-export const checkDisplayName = (displayName) => axios.get('/api/v1.0/auth/exists/displayName/' + displayName);
+
+//export const checkDisplayName = (displayName) => axios.get('/api/v1.0/auth/exists/displayName/' + displayName);
+
 export const localRegister = ({
   displayName,
   email,
@@ -31,3 +33,6 @@ export const socialRegister = ({
 });
 
 export const logout = () => axios.post('/api/v1.0/auth/logout');
+
+// new for RESTfulapi_go
+export const checkDisplayName = (displayName) => axios.get('/v1/auth/checkDisplayName/' + displayName);

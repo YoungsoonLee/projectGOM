@@ -15,20 +15,22 @@ import axios from 'axios';
 
 window.axios = axios;
 const socketURI = process.env.NODE_ENV === 'production'
-                    ? 'wss://api.bitimulate.com/ws'
+                    ? 'wss://api.naddic.com/ws'
                     : 'ws://localhost:4000/ws'
 
 if(process.env.NODE_ENV === 'production') {
   axios.defaults.withCredentials = true;
-  axios.defaults.baseURL = 'https://api.bitimulate.com';
+  axios.defaults.baseURL = 'https://api.naddic.com';
 }
 
 const store = rehydrate();
 
 console.log(socketURI);
+
 var wsStore = isProduction ? store : hotRehydrate();
-socket.initialize(wsStore, socketURI);
-window.socket = socket;
+
+//socket.initialize(wsStore, socketURI);
+//window.socket = socket;
 
 const renderApp = Component => {
 	render(
