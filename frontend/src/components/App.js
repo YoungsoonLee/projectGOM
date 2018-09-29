@@ -11,7 +11,7 @@ import { LastLocationProvider } from 'react-router-last-location';
 import NotFound from "./404";
 import Home from "./Home";
 import { TopBar } from "./header/index";
-import { Login, Logout } from './auth/index';
+import { Login, Logout, Signup } from './auth/index';
 import { EmailConfirm, UnEmailConfirm, ForgotPassword, ResetPassword, Profile} from './user/index';
 import { Payment, PaymentHistory } from './billing/index';
 import { News, NewsDetail } from './news/index';
@@ -50,6 +50,7 @@ export default class App extends Component {
 					
 						<Route exact path="/" component={Home}/>
 						<Route path="/login" component={Login}/>
+						<Route path="/signup" component={Signup}/>
 						<Route path="/logout" component={Logout}/>
 						<Route path="/email_confirm/:token" component={EmailConfirm} />
 						<Route path="/unemail_confirm/" component={UnEmailConfirm} />

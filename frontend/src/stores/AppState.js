@@ -44,14 +44,14 @@ export default class AppState {
 
     //for signup and login
     this.userInfo = {
-      displayName: '',
+      displayname: '',
       email: '',
       password: ''
     }
 
     this.loggedInUserInfo = {
       _id: '',
-      displayName: '',
+      displayname: '',
       gravatar: '',
       balance: '0',
       gravatar: '',
@@ -70,7 +70,7 @@ export default class AppState {
   }
 
   @action setInitUserInfo() {
-    this.userInfo.displayName = '';
+    this.userInfo.displayname = '';
     this.userInfo.email = '';
     this.userInfo.password = '';
 
@@ -89,7 +89,7 @@ export default class AppState {
 
     this.authenticated = false;
     this.loggedInUserInfo._id = '';
-    this.loggedInUserInfo.displayName = '';
+    this.loggedInUserInfo.displayname = '';
     this.loggedInUserInfo.gravatar = '';
     this.loggedInUserInfo.balance = '0';
     this.loggedInUserInfo.gravatar = '';
@@ -103,7 +103,7 @@ export default class AppState {
       this.authModalMode = 'SIGNIN';
     }
 
-    this.userInfo.displayName = '';
+    this.userInfo.displayname = '';
     this.userInfo.email = '';
     this.userInfo.password = '';
 
@@ -130,13 +130,17 @@ export default class AppState {
     //console.log(this.signupStep);
   }
 
+  @action setError(msg) {
+    this.error = msg;
+  }
+
   // check displayName dup
   @action async checkDisplayName() {
     //validate
     if ( 
-        !(validator.isLength(this.userInfo.displayName, {min:3, max: 15})) || 
-         (validator.contains(this.userInfo.displayName, ' ')) || 
-        !(validator.isAlphanumeric(this.userInfo.displayName))
+        !(validator.isLength(this.userInfo.displayname, {min:3, max: 15})) || 
+         (validator.contains(this.userInfo.displayname, ' ')) || 
+        !(validator.isAlphanumeric(this.userInfo.displayname))
         ){
       this.setError('a displayname has 3~15 letters/numbers without space.');
     }else{
@@ -146,7 +150,7 @@ export default class AppState {
     if(!this.error) {
 
       try{
-        let { data } = await AuthAPI.checkDisplayName(this.userInfo.displayName);
+        let { data } = await AuthAPI.checkDisplayName(this.userInfo.displayname);
         //data = await AuthAPI.checkDisplayName(this.userInfo.displayName);
         this.setError(null);
         this.setSignupStep(2) // move to next step
@@ -183,16 +187,22 @@ export default class AppState {
     }
 
     if(!this.error) {
-      let data = null;
+      //let data = null;
+      let respData = null;
       try{
-        data = await AuthAPI.localRegister({...this.userInfo});
+        respData = await AuthAPI.localRegister({...this.userInfo});
+        //console.log(respData.data);
+
         this.setInitUserInfo();
 
-        storage.set('___GOM___', data);
+        //storage.set('___GOM___', data);
+        storage.set('___GOM___', respData.data.data);
+
         this.authenticate();
         redirect.set(history,lastLocation);
 
       }catch(err){
+        //console.log("err: ", err)
         if (err.response.data) {
           this.setError(err.response.data.message);
         }else{
@@ -204,9 +214,17 @@ export default class AppState {
 
   // localLogin
   @action async localLogin(history, lastLocation) {
-
+    /*
     if(!validator.isEmail(this.userInfo.email)) {
       this.setError('please input a valid email address.');
+    }else 
+    */
+   if ( 
+      !(validator.isLength(this.userInfo.displayname, {min:3, max: 15})) || 
+      (validator.contains(this.userInfo.displayname, ' ')) || 
+      !(validator.isAlphanumeric(this.userInfo.displayname))
+      ){
+      this.setError('a displayname has 3~15 letters/numbers without space.');
     }else if ( !(validator.isLength(this.userInfo.password, {min:8, max: undefined})) || (validator.contains(this.userInfo.password, ' ')) ){
       this.setError('The password must be at least 8 characters long without space.');
     }else{
@@ -215,18 +233,22 @@ export default class AppState {
 
     if(!this.error) {
       
-      let data = null;
+      //let data = null;
+      let respData = null;
       try{
-        data = await AuthAPI.localLogin({email: this.userInfo.email, password: this.userInfo.password});
+
+        respData = await AuthAPI.localLogin({displayname: this.userInfo.displayname, password: this.userInfo.password});
         
         this.setInitUserInfo();
+        //console.log(respData.data.data);
+        //console.log(JSON.stringify(respData.data.data))
+        storage.set('___GOM___', respData.data.data);
 
-        storage.set('___GOM___', data);
         this.authenticate();
         redirect.set(history,lastLocation);
 
       }catch(err){
-        console.log(err);
+        //console.log(err);
         if (err.response.data) {
           this.setError(err.response.data.message);
         }else{
@@ -244,7 +266,7 @@ export default class AppState {
       if(!this.error) {
         social[provider]().then((accessToken)=>{
           AuthAPI.socialRegister({ 
-            displayName: this.userInfo.displayName, 
+            displayname: this.userInfo.displayname, 
             provider: provider, 
             accessToken: accessToken,
           }).then((response)=>{
@@ -272,7 +294,7 @@ export default class AppState {
 
       if(!this.error) {
         social[provider]().then((accessToken)=>{
-          AuthAPI.socialLogin({ 
+          AuthAPI.socialAuth({ 
             provider: provider, 
             accessToken: accessToken,
           }).then((response)=>{
@@ -295,36 +317,34 @@ export default class AppState {
     }
   }
 
-  @action setError(msg) {
-    this.error = msg;
-  }
-
   @action async authenticate() {
     //check auth
     //TODO: think ! check GOM or not
+    let cookieInfo = null;
+    cookieInfo = storage.get('___GOM___');
 
-    if ( storage.get('___GOM___') ) {
+    //if ( storage.get('___GOM___') ) {
+    if ( cookieInfo ) {
       let auth = null;
       try{
-        auth = await AuthAPI.checkLoginStatus();
-        //console.log('auth: ', auth);
+        auth = await AuthAPI.checkLoginStatus(cookieInfo.token);
+        console.log('auth: ', auth);
+        console.log('auth: ', auth.data);
       }catch(e){
         //console.log('exception check: ', e.message);
         await this.setInitLoggedInUserInfo();
       }
 
       if(!auth) {
-        //console.log('1');
         await this.setInitLoggedInUserInfo()
       }else{
-        //console.log('2');
-        storage.set('___GOM___', auth.data);
+        //storage.set('___GOM___', auth.data);
         
         this.authenticated = true;
-        this.loggedInUserInfo._id = auth.data.user._id;
-        this.loggedInUserInfo.displayName = auth.data.user.displayName;
+        this.loggedInUserInfo._id = auth.data.user.uid;
+        this.loggedInUserInfo.displayName = auth.data.user.displayname;
         this.loggedInUserInfo.balance = auth.data.balance.toString();
-        this.loggedInUserInfo.gravatar = auth.data.gravatar;
+        this.loggedInUserInfo.gravatar = auth.data.pciture;
       }
     }else{
       console.log('no gom');

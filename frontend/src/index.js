@@ -25,7 +25,7 @@ if(process.env.NODE_ENV === 'production') {
 
 const store = rehydrate();
 
-console.log(socketURI);
+//console.log(socketURI);
 
 var wsStore = isProduction ? store : hotRehydrate();
 

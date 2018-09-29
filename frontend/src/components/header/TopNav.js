@@ -68,7 +68,6 @@ class TopNav extends Component {
 	render() {
 		const { authenticated, authenticating, loggedInUserInfo } = this.store;
 		const { history } = this.props;
-
 		const { activeItem } = this.state;
 
 		var viewPane = null;
@@ -88,7 +87,12 @@ class TopNav extends Component {
 				</div>
 			)
 		}else{
-			viewPane = (<div><Menu.Item name='login' active={activeItem === 'login'} onClick={this.handleItemClick}>Sign In</Menu.Item></div>)
+			viewPane = (
+					<Menu pointing borderless={true} >
+						<Menu.Item name='login' active={activeItem === 'login'} onClick={this.handleItemClick}>Sign In</Menu.Item>
+						<Menu.Item name='signup' active={activeItem === 'signup'} onClick={this.handleItemClick}>Sign Up</Menu.Item>
+					</Menu>
+				)
 		}
 
 		var paymentPane = null;
@@ -101,7 +105,7 @@ class TopNav extends Component {
 		}
 
 		return (
-			<div  className="item">
+			<div className="item">
 				<Menu pointing borderless={true} fixed='top' >
 					<Container>
 						<Menu.Item name='home' active={activeItem === 'home'} onClick={this.handleItemClick} />

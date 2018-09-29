@@ -2,6 +2,7 @@ export default (function() {
     const st = localStorage || { };
     return {
       set: (key, object) => {
+        //console.log("ss: ", JSON.stringify(object))
         st[key] = (typeof object) === 'string' ? object : JSON.stringify(object);
       },
       get: (key) => {
