@@ -3,6 +3,7 @@ import { inject, observer } from "mobx-react";
 import { Redirect,Link, withRouter  } from "react-router-dom";
 
 import { Container, Button, Header, Modal, Message, Grid, Form, Segment, Input, Divider, Label, Icon } from 'semantic-ui-react'
+import validator from 'validator';
 
 //import ActiveLink from "../ui/ActiveLink";
 import Social from './Social';
@@ -14,35 +15,42 @@ import { withLastLocation } from 'react-router-last-location';
 @withRouter
 @inject("store")
 @observer
-class Login extends Component {
+class Signup extends Component {
     constructor(props) {
-        console.log('constructor');
         super(props);
-        this.store = this.props.store.appState;
-
-        this.store.setInitUserInfo(); // clear message
-
-        //const { lastLocation } = this.props;
-        //console.log(JSON.stringify(lastLocation, undefined, 2));
+        this.store = this.props.store;
+        this.store.appState.setInitUserInfo(); // clear flash message
     }
-
+    /*
     componentDidMount() {
+        this.store = this.props.store.appState;
+        this.store.setInitUserInfo(); // clear flash message
         console.log('componentDidMount');
     }
     
-     
     componentDidUpdate(){
         console.log('componentDidUpdate');
     }
-    
-
-    handleModeChanged = (e) =>{
-        this.store.changeAuthModalMode();
+    */
+    handleSignup = (e) => {
+        if (e) e.preventDefault();
+        const { history, lastLocation } = this.props;
+        const { userInfo, setError, localRegister, error } = this.store;
+        localRegister(history, lastLocation)
     }
 
+    handleModeChanged = (e) =>{
+        //this.store.changeAuthModalMode();
+        this.store.setInitUserInfo();
+        const { history } = this.props;
+        history.push('/login');
+    }
+
+    /*
     hanleModeInit = (e) => {
         this.store.setInitModal();
     }
+    */
 
     handleInputEmail = (e, { value }) => {
         this.store.userInfo.email = value;
@@ -56,28 +64,24 @@ class Login extends Component {
         this.store.userInfo.displayname = value;
     }
 
+    /*
     handleForgotPassword = (e) =>{
-        e.stopPropagation();
-        e.nativeEvent.stopImmediatePropagation();
-        /*
         this.store.setInitUserInfo();
         const { history } = this.props;
         history.push('/forgot_password');
-        */
     }
+    */
 
     // login or register component
 	render() {
         const { history } = this.props;
         const { lastLocation } = this.props;
-
-        // TODO: next 쿼리 체크
-        const { authModalMode, signupStep, userInfo, error, errorFlash, successFlash } = this.store;
+        const { userInfo, error, errorFlash, successFlash } = this.store.appState;
 
         const ErrorView = (
             <Label basic color='red' size='small' style={{border:0}}>{error}</Label>
         );
-
+        
         var successFlashView = null;
         if(successFlash) {
             successFlashView = (
@@ -92,8 +96,8 @@ class Login extends Component {
             );
         }
 
-        const SigninView = (
-            <Form size='large' >
+        const SignupView = (
+            <Form size='large'>
                 <Segment>
                     <Form.Field>
                         <Input 
@@ -103,6 +107,16 @@ class Login extends Component {
                             name='displayname'
                             value={userInfo.displayname} 
                             onChange={this.handleInputDisplayName}
+                        />
+                    </Form.Field>
+                    <Form.Field>
+                        <Input 
+                            icon='mail' 
+                            iconPosition='left'
+                            placeholder='E-mail address' 
+                            name='email' 
+                            value={userInfo.email} 
+                            onChange={this.handleInputEmail}
                         />
                     </Form.Field>
                     <Form.Field>
@@ -121,74 +135,12 @@ class Login extends Component {
                             { error !== null ? ErrorView : null }
                         </div>
                     </Form.Field>
-                        <Button color='violet' fluid size='small' onClick={()=>this.store.localLogin(history, lastLocation)}>{authModalMode === 'SIGNIN' ? 'SIGN IN' : 'SIGN UP'}</Button>
+                    <div>
+                        <Button color='violet' fluid size='small' onClick={()=>this.store.localRegister(history, lastLocation)}>SIGN UP</Button>
+                    </div>
                     <Divider horizontal>Or</Divider>
                     <Social lastLocation={lastLocation}/>
                 </Segment>
-            </Form>
-        );
-
-        const SignupStep1 = (
-            <Segment>
-                <Form.Field>
-                    <Input 
-                        icon='user' 
-                        iconPosition='left' 
-                        placeholder='Display name.(Nick name)' 
-                        name='displayname'
-                        value={userInfo.displayname} 
-                        onChange={this.handleInputDisplayName}
-                    />
-                </Form.Field>
-                
-                <Form.Field>
-                    <div>
-                        { error !== null ? ErrorView : null }
-                    </div>
-                </Form.Field>
-                <Button color='violet' fluid size='small' onClick={() => this.store.checkDisplayName() } value='2'>NEXT</Button>
-            </Segment>
-        );
-
-        const SignupStep2 = (
-            <Segment>
-                <Form.Field>
-                    <Input 
-                        icon='mail' 
-                        iconPosition='left'
-                        placeholder='E-mail address' 
-                        name='email' 
-                        value={userInfo.email} 
-                        onChange={this.handleInputEmail}
-                    />
-                </Form.Field>
-                <Form.Field>
-                    <Input 
-                        icon='lock' 
-                        iconPosition='left' 
-                        placeholder='Password' 
-                        type='password' 
-                        name='Password'
-                        value={userInfo.password} 
-                        onChange={this.handleInputPassword}
-                    />
-                </Form.Field>
-                <Form.Field>
-                    <div>
-                        { error !== null ? ErrorView : null }
-                    </div>
-                </Form.Field>
-                <div>
-                    <Button color='violet' fluid size='small' onClick={() => this.store.localRegister(history, lastLocation)}>SIGNUP</Button>
-                </div>
-                <Divider horizontal>Or</Divider>
-                <Social lastLocation={lastLocation}/>
-            </Segment>
-        );
-
-        const SignupView = (
-            <Form size='large'>
-                { signupStep === 1 ? SignupStep1 : SignupStep2 }
             </Form>
         );
 
@@ -199,12 +151,12 @@ class Login extends Component {
                         {successFlashView}
                         {errorFlashView}
                         
-                        <Header as='h2' textAlign='center'>{authModalMode === 'SIGNIN' ? 'SIGN IN' : 'SIGN UP'}</Header>
+                        <Header as='h2' textAlign='center'>SIGN UP</Header>
 
-                        { authModalMode === 'SIGNIN' ? SigninView : SignupView }
+                        { SignupView }
 
                         <Message>
-                            <a style={{ cursor: 'pointer' }} onClick={this.handleForgotPassword}>Forgot Password?</a> {authModalMode === 'SIGNIN' ? 'New to us?' : 'already join us?'}  <a style={{ cursor: 'pointer' }} onClick={this.handleModeChanged}>{authModalMode === 'SIGNIN' ? 'SIGN UP' : 'SIGN IN'}</a>
+                            Already join us?  <a style={{ cursor: 'pointer' }} onClick={this.handleModeChanged}>SIGN IN</a>
                         </Message>
 
                     </Grid.Column>
@@ -216,4 +168,4 @@ class Login extends Component {
 	}
 }
 
-export default withLastLocation(Login);
+export default withLastLocation(Signup);

@@ -21,6 +21,7 @@ export default class AppState {
   @observable userInfo;
   @observable error;
   @observable loggedInUserInfo;
+  @observable viewFlash;
   @observable errorFlash;
   @observable successFlash;
   @observable profileEmail;
@@ -58,6 +59,7 @@ export default class AppState {
     }
 
     this.error = null;
+    this.viewFlash = false;
     this.errorFlash = null;
     this.successFlash = null;
     this.profileEmail = null;
@@ -75,6 +77,7 @@ export default class AppState {
     this.userInfo.password = '';
 
     this.error = null;
+    this.viewFlash = false;
     this.errorFlash = null;
     this.successFlash = null;
 
@@ -177,9 +180,15 @@ export default class AppState {
 
   // localSignup
   @action async localRegister(history, lastLocation) {
-
-    if(!validator.isEmail(this.userInfo.email)) {
-      this.setError('please input a valid email address.');
+    // validation
+    if ( 
+        !(validator.isLength(this.userInfo.displayname, {min:4, max: 16})) || 
+        (validator.contains(this.userInfo.displayname, ' ')) || 
+        !(validator.isAlphanumeric(this.userInfo.displayname))
+        ){
+      this.setError('A displayname has 4~16 letters/numbers without space.');
+    }else if(!validator.isEmail(this.userInfo.email)) {
+      this.setError('Please input a valid email address.');
     }else if ( !(validator.isLength(this.userInfo.password, {min:8, max: undefined})) || (validator.contains(this.userInfo.password, ' ')) ){
       this.setError('The password must be at least 8 characters long without space.');
     }else{
@@ -190,19 +199,25 @@ export default class AppState {
       //let data = null;
       let respData = null;
       try{
+        // call backend
         respData = await AuthAPI.localRegister({...this.userInfo});
-        //console.log(respData.data);
 
+        // set init userinfo
         this.setInitUserInfo();
 
-        //storage.set('___GOM___', data);
+        // make cookie
         storage.set('___GOM___', respData.data.data);
 
+        // login
         this.authenticate();
+
+        // redirect to home
         redirect.set(history,lastLocation);
 
+        // flash message
+        this.successFlash = 'Welcome ! ' + respData.data.data.displayname;
+
       }catch(err){
-        //console.log("err: ", err)
         if (err.response.data) {
           this.setError(err.response.data.message);
         }else{
@@ -214,6 +229,8 @@ export default class AppState {
 
   // localLogin
   @action async localLogin(history, lastLocation) {
+    console.log("call login");
+
     /*
     if(!validator.isEmail(this.userInfo.email)) {
       this.setError('please input a valid email address.');
@@ -256,6 +273,7 @@ export default class AppState {
         }
       }
     }
+
   }
 
   // socialAuth

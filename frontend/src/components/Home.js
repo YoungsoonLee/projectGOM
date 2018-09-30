@@ -13,19 +13,24 @@ export default class Home extends Component {
 		this.store = this.props.store;
 	}
 
+	handleDismiss = () => {
+		this.store.appState.successFlash = null;
+		//setTimeout(() => {this.store.appState.successFlash = null;}, 2000)
+	}
+
 	render() {
 		const store = this.store;
 
         // TODO: next 쿼리 체크
         const { authModalMode, signupStep, userInfo, error, errorFlash, successFlash } = this.store.appState;
-
+		
 		var successFlashView = null;
         if(successFlash) {
             successFlashView = (
-                <Message success visible size='tiny'>{successFlash}</Message>
+                <Message onDismiss={this.handleDismiss} success visible size='tiny'>{successFlash}</Message>
             );
-        }
-
+		}
+		
         var errorFlashView = null;
         if(errorFlash) {
             errorFlashView = (
