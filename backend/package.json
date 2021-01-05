@@ -12,7 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@jifeon/winston": "^2.3.1",
-    "axios": "^0.17.1",
+    "axios": "^0.21.1",
     "bcrypt-nodejs": "^0.0.3",
     "bookshelf": "^0.12.0",
     "bookshelf-eloquent": "^0.1.15",
