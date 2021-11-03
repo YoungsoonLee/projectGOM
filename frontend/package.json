@@ -75,7 +75,7 @@
     "redux": "^3.7.2",
     "rfx-core": "^1.5.3",
     "semantic-ui-react": "^0.77.1",
-    "validator": "^9.2.0",
+    "validator": "^13.7.0",
     "whatwg-fetch": "^2.0.3"
   },
   "repository": {
