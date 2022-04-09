@@ -35,7 +35,7 @@
     "koa2-cors": "^2.0.5",
     "koa2-winston": "^1.7.1",
     "lzutf8": "^0.4.7",
-    "moment": "^2.20.0",
+    "moment": "^2.29.2",
     "node-sha1": "^1.0.1",
     "nodemailer": "^4.4.1",
     "pg": "^7.4.0",
